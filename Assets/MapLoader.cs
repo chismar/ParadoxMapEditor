@@ -8,10 +8,14 @@ using System.Drawing.Imaging;
 using System.Threading;
 public class MapLoader : MonoBehaviour {
 
-    public GameObject LoadingLabel;
+    public LoaderProgressUI ProgressBar;
     public Texture2D DebugMap;
     public Project ChosenProject;
     public Map Map;
+    public event System.Action FinishedLoadingMap;
+    public int ProgressMax;
+    public int CurrentProgress;
+    public object ProgressLock = new object();
     bool finished = false;
     bool shouldContinue = true;
     Thread loadThread;
@@ -27,6 +31,7 @@ public class MapLoader : MonoBehaviour {
 
     IEnumerator ThreadWatchdog()
     {
+        ProgressBar.Text = "Loading map data. Please wait...";
         while(!finished && shouldContinue)
         {
             yield return null;
@@ -35,7 +40,8 @@ public class MapLoader : MonoBehaviour {
         Debug.Log("Finished loading and joined thread. Map is ready to be used");
         foreach ( var province in Map.Provinces)
             province.TemporaryRandomColor = Random.ColorHSV();
-        LoadingLabel.SetActive(false);
+        if (FinishedLoadingMap != null)
+            FinishedLoadingMap();
     }
     void OnDestroy()
     {
@@ -45,6 +51,17 @@ public class MapLoader : MonoBehaviour {
     {
         Debug.Log("Generating");
         var provincesFile = File.ReadAllLines(directory + "/definition.csv");
+        var provincesMap = new Bitmap(directory + "/provinces.bmp");
+        var specialAdjanciesFile = File.ReadAllLines(directory + "/adjacencies.csv");
+
+        lock(Map)
+        {
+            Map.Height = provincesMap.Height;
+            Map.Width = provincesMap.Width;
+        }
+        lock (ProgressBar)
+            ProgressBar.MaxProgress = provincesMap.Width;
+
         List<Province> provinces = new List<Province>();
         Dictionary<int, Province> provincesByID = new Dictionary<int, Province>();
         Dictionary<System.Drawing.Color, Province> provincesByColor = new Dictionary<System.Drawing.Color, Province>();
@@ -52,12 +69,11 @@ public class MapLoader : MonoBehaviour {
         {
             var province = new Province();
             var stringData = provincesFile[i].Split(';');
-
-            province.LineNumberThatMightBeImportant = i;
-            province.FirstNumber = int.Parse(stringData[0]);
-            province.SecondNumber = byte.Parse(stringData[1]);
-            province.ThirdNumber = byte.Parse(stringData[2]);
-            province.FourthNumber = byte.Parse(stringData[3]);
+            
+            province.ID = int.Parse(stringData[0]);
+            var red = byte.Parse(stringData[1]);
+            var green = byte.Parse(stringData[2]);
+            var blue = byte.Parse(stringData[3]);
 
             province.Type = stringData[4] == "land" ? ProvinceType.Land : stringData[4] == "sea" ? ProvinceType.Sea : ProvinceType.Lake;
             province.SomeBool = stringData[5] == "true";
@@ -65,16 +81,19 @@ public class MapLoader : MonoBehaviour {
             province.LastValue = int.Parse(stringData[7]);
 
             provinces.Add(province);
-            provincesByColor.Add(System.Drawing.Color.FromArgb( province.SecondNumber, province.ThirdNumber, province.FourthNumber), province);
-            provincesByID.Add(province.FirstNumber, province);
+            var uniqueColor = System.Drawing.Color.FromArgb(red, green, blue);
+            province.MapUniqueColor = uniqueColor;
+            provincesByColor.Add(uniqueColor, province);
+            provincesByID.Add(province.ID, province);
 
             if (!shouldContinue)
                 return;
+            //lock (ProgressLock)
+            //    CurrentProgress++;
         }
         
         //DebugMap = ReadBMPToTexture(directory + "/provinces.bmp");
         Debug.Log("Loaded provinces, now loading map");
-        var provincesMap = new Bitmap(directory + "/provinces.bmp");
         
         var tiles = new Tile[provincesMap.Width, provincesMap.Height];
         Debug.Log(provincesMap.Width);
@@ -89,14 +108,16 @@ public class MapLoader : MonoBehaviour {
                 tile.Y = y;
                 tile.Province = provincesByColor[provincesMap.GetPixel(x, y)];
             }
-            Debug.Log(x);
             if (!shouldContinue)
                 return;
+
+            lock (ProgressBar)
+                ProgressBar.Progress = x;
+
         }
 
         Debug.Log("Loaded provinces map, reading adjacencies");
 
-        var specialAdjanciesFile = File.ReadAllLines(directory + "/adjacencies.csv");
         //-1 because of the last dummy line
         for ( int i = 1; i < specialAdjanciesFile.Length - 1; i++)
         {
@@ -130,6 +151,8 @@ public class MapLoader : MonoBehaviour {
 
             if (!shouldContinue)
                 return;
+            //lock (ProgressLock)
+            //    CurrentProgress++;
         }
         Debug.Log("Setting map data");
         try

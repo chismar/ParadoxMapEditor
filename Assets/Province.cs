@@ -4,11 +4,8 @@ using System.Collections.Generic;
 public class Province {
 
     public Color TemporaryRandomColor;
-    public int LineNumberThatMightBeImportant;
-    public int FirstNumber; // possibly ID
-    public byte SecondNumber; // red
-    public byte ThirdNumber; // green
-    public byte FourthNumber; // blue I believe
+    public int ID; // possibly ID
+    public System.Drawing.Color MapUniqueColor;
     public ProvinceType Type;
     public bool SomeBool;
     public string OtherType;

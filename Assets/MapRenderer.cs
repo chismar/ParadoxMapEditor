@@ -5,48 +5,117 @@ using UnityEngine.UI;
 
 public class MapRenderer : MonoBehaviour
 {
+    public MapLoader MapLoader;
+    public LoaderProgressUI ProgressBar;
+    void Awake()
+    {
+        MapLoader.FinishedLoadingMap += () => { map = MapLoader.Map; FullRedraw(); };
+    }
+
+    void Update()
+    {
+        if(map == null)
+        {
+            if (MapLoader.Map != null)
+                lock (MapLoader.Map)
+                {
+                    if (MapLoader.Map.Width > 0 && MapLoader.Map.Height > 0)
+                    {
+                        map = MapLoader.Map;
+                        StartCoroutine(CreateChunks());
+                    }
+                }
+        }
+        else if (ready)
+        {
+            foreach (var chunk in forUpdate)
+                chunk.Apply();
+            forUpdate.Clear();
+        }
+    }
     public GameObject ChunkProto;
     Map map;
-    public Map Map { get { return map; } set { map = value; if(map != null) FullRedraw(); } }
+    bool chunksReady = false;
+    bool ready = false;
     Texture2D[,] chunks;
     List<GameObject> chunkGOs = new List<GameObject>();
     HashSet<Texture2D> forUpdate = new HashSet<Texture2D>();
-    int chunkSize = 32;
-    void FullRedraw()
+    int chunkSize = 64;
+    IEnumerator CurrentCoroutine;
+
+    IEnumerator CreateChunks()
     {
+        chunksReady = false;
         foreach (var chunkGO in chunkGOs)
             Destroy(chunkGO);
         chunkGOs.Clear();
-        int chunksWidth = (map.Width / chunkSize + 1) * chunkSize; 
-        int chunksHeight = (map.Height / chunkSize + 1) * chunkSize;
+        int chunksWidth = (map.Width / chunkSize + 1);
+        int chunksHeight = (map.Height / chunkSize + 1);
         chunks = new Texture2D[chunksWidth, chunksHeight];
-        for ( int i = 0; i <chunksWidth; i++)
-            for ( int j = 0; j < chunksHeight; j++)
+        var time = Time.realtimeSinceStartup;
+        for (int i = 0; i < chunksWidth; i++)
+            for (int j = 0; j < chunksHeight; j++)
             {
                 var chunkTex = new Texture2D(chunkSize, chunkSize);
                 chunks[i, j] = chunkTex;
                 GameObject chunkGo = GameObject.Instantiate(ChunkProto);
+                var chunkData = chunkGo.GetComponent<ChunkMapController>();
+                chunkData.MapOffsetX = i * chunkSize;
+                chunkData.MapOffsetY = j * chunkSize;
+                chunkData.Size = chunkSize;
                 var image = chunkGo.GetComponent<Image>();
-                var rect = chunkGo.GetComponent<RectTransform>();
-                rect.position = new Vector3(i * chunkSize, j * chunkSize, 0);
-                rect.sizeDelta = new Vector2(chunkSize, chunkSize);
                 image.sprite = Sprite.Create(chunkTex, Rect.MinMaxRect(0, 0, chunkSize, chunkSize), Vector2.zero);
-                rect.SetParent(transform, false);
+                chunkGo.transform.SetParent(transform, false);
+                chunkGOs.Add(chunkGo);
+                if(Time.realtimeSinceStartup - time > 12f)
+                    yield return null;
             }
-        
-        foreach(var province in map.Provinces)
+        chunksReady = true;
+    }
+    IEnumerator RedrawCoroutine()
+    {
+        ProgressBar.Text = "Creating chunks. Please wait...";
+        ProgressBar.MaxProgress = chunks.GetLength(0)*chunks.GetLength(1);
+        ProgressBar.Progress = 0;
+        while (!chunksReady)
         {
-            foreach ( var tile in province.Tiles)
+            ProgressBar.Progress = chunkGOs.Count;
+            yield return null;
+        }
+        ProgressBar.Text = "Writing provinces pixel data. Please wait...";
+        ProgressBar.MaxProgress = map.Provinces.Count;
+        ProgressBar.Progress = 0;
+        foreach (var province in map.Provinces)
+        {
+            foreach (var tile in province.Tiles)
             {
                 WritePixelTo(tile.X, tile.Y, province.TemporaryRandomColor);
             }
+            ProgressBar.Progress++;
         }
+        yield return null;
+        ProgressBar.Text = "Creating textures. Please wait...";
+        ProgressBar.MaxProgress = forUpdate.Count;
+        ProgressBar.Progress = 0;
         foreach (var texToUpdate in forUpdate)
+        {
             texToUpdate.Apply();
+            ProgressBar.Progress++;
+            yield return null;
+        }
+        ProgressBar.MaxProgress = 0;
         forUpdate.Clear();
+        ready = true;
+    }
+    void FullRedraw()
+    {
+        ready = false;
+        if (CurrentCoroutine != null)
+            StopCoroutine(CurrentCoroutine);
+        StartCoroutine(CurrentCoroutine = RedrawCoroutine());
     }
 
-    void WritePixelTo(int x, int y, Color color)
+    public void WritePixelTo(int x, int y, Color color)
     {
         int chunkX = x / chunkSize;
         int chunkOffsetX = x - chunkX * chunkSize;
@@ -58,20 +127,6 @@ public class MapRenderer : MonoBehaviour
         forUpdate.Add(chunkTex);
 
     }
-
-    void Update()
-    {
-        if(map != null)
-        for ( int i =0; i < map.Width; i++)
-            for(int j = 0; j < map.Height; j++)
-            {
-                var tile = map.Tiles[i, j];
-                if(tile.Changed)
-                {
-                    tile.Changed = false;
-                    WritePixelTo(i, j, tile.Province.TemporaryRandomColor);
-                }
-            }
-    }
+    
     
 }
