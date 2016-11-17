@@ -49,11 +49,10 @@ public class MapLoader : MonoBehaviour {
     }
     void LoadFrom(string directory)
     {
-        Debug.Log("Generating");
+        Debug.Log("Loading");
         var provincesFile = File.ReadAllLines(directory + "/definition.csv");
         var provincesMap = new Bitmap(directory + "/provinces.bmp");
         var specialAdjanciesFile = File.ReadAllLines(directory + "/adjacencies.csv");
-
         lock(Map)
         {
             Map.Height = provincesMap.Height;
@@ -106,7 +105,7 @@ public class MapLoader : MonoBehaviour {
                 tiles[x, y] = tile;
                 tile.X = x;
                 tile.Y = y;
-                tile.Province = provincesByColor[provincesMap.GetPixel(x, y)];
+                tile.Province = provincesByColor[provincesMap.GetPixel(x, provincesMap.Height - 1 - y)];
             }
             if (!shouldContinue)
                 return;
@@ -118,14 +117,16 @@ public class MapLoader : MonoBehaviour {
 
         Debug.Log("Loaded provinces map, reading adjacencies");
 
-        //-1 because of the last dummy line
-        for ( int i = 1; i < specialAdjanciesFile.Length - 1; i++)
+        try
+        {
+            //-1 because of the last dummy line
+            for ( int i = 1; i < specialAdjanciesFile.Length - 1; i++)
         {
             var adjacency = new Adjacency();
             var lineData = specialAdjanciesFile[i].Split(';');
             adjacency.From = provincesByID[int.Parse(lineData[0])];
             adjacency.To = provincesByID[int.Parse(lineData[1])];
-            adjacency.Type = lineData[3] == "sea" ? AdjacencyType.Sea : AdjacencyType.Land;
+            adjacency.Type = lineData[2] == "sea" ? AdjacencyType.Sea : AdjacencyType.Land;
             int throughIndex = -1;
             if (int.TryParse(lineData[3], out throughIndex) && throughIndex != -1)
                 adjacency.Through = provincesByID[throughIndex];
@@ -135,12 +136,10 @@ public class MapLoader : MonoBehaviour {
             int stopY = -1;
             if (int.TryParse(lineData[4], out startX) && int.TryParse(lineData[5], out startY) && int.TryParse(lineData[6], out stopX) && int.TryParse(lineData[7], out stopY))
             {
-                if(startX != -1 && startY != -1 && stopX != -1 && stopY != -1)
-                {
+                if(startX != -1 && startY != -1)
                     adjacency.StartTile = tiles[startX, startY];
+                if(stopX != -1 && stopY != -1)
                     adjacency.StopTile = tiles[stopX, stopY];
-                }
-                    
             }
 
             adjacency.AdjacencyRule = lineData[8];
@@ -155,8 +154,6 @@ public class MapLoader : MonoBehaviour {
             //    CurrentProgress++;
         }
         Debug.Log("Setting map data");
-        try
-        {
 
             Map.Provinces = provinces;
             Map.ColorCodedProvinces = provincesByColor;
@@ -172,6 +169,7 @@ public class MapLoader : MonoBehaviour {
         Debug.Log("Map data set");
         shouldContinue = false;
         finished = true;
+        provincesMap.Dispose();
     }
 
     Texture2D ReadBMPToTexture(string path)

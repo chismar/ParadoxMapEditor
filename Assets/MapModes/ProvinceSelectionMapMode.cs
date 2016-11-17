@@ -9,13 +9,45 @@ public class ProvinceSelectionMapMode : MapMode
 
     int brushSize = 3;
 
-    public override void OnChoseMapMode()
+    static MapModesAndControls controls;
+    static Controller controller;
+    UnityEngine.UI.Text provinceSelection;
+    UnityEngine.UI.Text brushSizeText;
+    void Awake()
     {
+        base.Awake();
+        if (controls == null && controller == null)
+        {
+            controls = FindObjectOfType<MapModesAndControls>();
+            controller = FindObjectOfType<Controller>();
+        }
+        controls.RegisterCallback(() => controller.SelectMapMode(this), "Province selection");
+
+    }
+
+    void Update()
+    {
+
+    }
+
+    public override void Enable()
+    {
+        base.Enable();
         selectedProvince = null;
+        brushSizeText = dataPanel.PostString(brushSize.ToString());
+        provinceSelection = dataPanel.PostString("Province not selected yet");
+    }
+
+    public override void Disable()
+    {
+        base.Disable();
+        Destroy(brushSizeText.gameObject);
+        Destroy(provinceSelection.gameObject);
     }
     public override void OnLeft(int x, int y)
     {
         selectedProvince = Map.Tiles[x, y].Province;
+        provinceSelection.text = "Province selected: " +  selectedProvince.ID;
 
     }
     public override void OnRightClick(int x, int y)

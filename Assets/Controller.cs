@@ -12,7 +12,15 @@ public class Controller : MonoBehaviour
     {
         
         var loader = FindObjectOfType<MapLoader>();
-        loader.FinishedLoadingMap += () => { CurrentMapMode = gameObject.AddComponent<ProvinceSelectionMapMode>(); CurrentMapMode.Map = loader.Map; };
+        loader.FinishedLoadingMap += () => { SelectMapMode(gameObject.AddComponent<ProvinceSelectionMapMode>()); CurrentMapMode.Map = loader.Map; };
+    }
+
+    public void SelectMapMode(MapMode mode)
+    {
+        if (CurrentMapMode != null)
+            CurrentMapMode.Disable();
+        CurrentMapMode = mode;
+        mode.Enable();
     }
     public void OnPointerDown(int x, int y, PointerEventData.InputButton button)
     {
@@ -35,6 +43,8 @@ public class Controller : MonoBehaviour
 
     public void OnPointerUp(int x, int y, PointerEventData.InputButton button)
     {
+        if (button != PointerEventData.InputButton.Right)
+            return;
         if (CurrentMapMode == null)
             return;
         CurrentMapMode.OnRightStop(x, y);
@@ -42,6 +52,8 @@ public class Controller : MonoBehaviour
 
     internal void OnDrag(int x, int y, PointerEventData.InputButton button)
     {
+        if (button != PointerEventData.InputButton.Right)
+            return;
         if (CurrentMapMode == null)
             return;
         CurrentMapMode.OnRightDrag(x, y);

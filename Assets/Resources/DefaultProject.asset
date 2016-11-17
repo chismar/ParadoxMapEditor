@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Name: DefaultProject
   m_EditorClassIdentifier: 
   Name: TestProject
-  Directory: "C:\\Users\\\u0412\u0438\u0442\u0430\u043B\u0438\u0439\\Documents\\ParadoxMapEditor\\map"
+  Directory: "\u0430\u043B\u0438\u0439\\Documents\\ParadoxMapEditor\\mapapEditor\\map"
   Date: 11/15/2016
