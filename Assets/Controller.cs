@@ -6,13 +6,24 @@ using System;
 public class Controller : MonoBehaviour
 {
     public MapMode CurrentMapMode;
-    
 
+    MapLoader loader;
     void Start()
     {
         
-        var loader = FindObjectOfType<MapLoader>();
-        loader.FinishedLoadingMap += () => { SelectMapMode(gameObject.AddComponent<ProvinceSelectionMapMode>()); CurrentMapMode.Map = loader.Map; };
+        loader = FindObjectOfType<MapLoader>();
+        loader.FinishedLoadingMap += () => { SelectMapMode(GetComponent<ProvinceSelectionMapMode>()); CurrentMapMode.Map = loader.Map; EnableAllMapModes(); };
+    }
+
+    private void EnableAllMapModes()
+    {
+        var modes = GetComponents<MapMode>();
+        foreach (var mode in modes)
+        {
+
+            mode.enabled = true;
+            mode.Map = loader.Map;
+        }
     }
 
     public void SelectMapMode(MapMode mode)

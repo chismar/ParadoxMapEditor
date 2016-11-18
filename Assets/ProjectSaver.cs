@@ -58,7 +58,7 @@ public class ProjectSaver : MonoBehaviour
             builder.Append(province.Type == ProvinceType.Lake? "lake" : (province.Type == ProvinceType.Land? "land" : "sea")).Append(';');
             builder.Append(province.SomeBool?"true":"false").Append(';');
             builder.Append(province.OtherType).Append(';');
-            builder.Append(province.LastValue).AppendLine();
+            builder.Append(province.Continent).AppendLine();
             var lineBytes = encoder.GetBytes(builder.ToString());
             defStream.Write(lineBytes,0, lineBytes.Length);
         }

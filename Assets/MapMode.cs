@@ -7,7 +7,7 @@ public abstract class MapMode : MonoBehaviour
     public MapRenderer Renderer;
     protected bool enabled = false;
     static protected MapModeDataPanel dataPanel;
-    public void Awake()
+    void Awake()
     {
         if(dataPanel == null)
             dataPanel = FindObjectOfType<MapModeDataPanel>();

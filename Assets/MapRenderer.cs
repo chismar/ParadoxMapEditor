@@ -89,7 +89,7 @@ public class MapRenderer : MonoBehaviour
         {
             foreach (var tile in province.Tiles)
             {
-                WritePixelTo(tile.X, tile.Y, province.TemporaryRandomColor);
+                Update(tile.X, tile.Y);
             }
             ProgressBar.Progress++;
         }
@@ -114,19 +114,52 @@ public class MapRenderer : MonoBehaviour
             StopCoroutine(CurrentCoroutine);
         StartCoroutine(CurrentCoroutine = RedrawCoroutine());
     }
-
-    public void WritePixelTo(int x, int y, Color color)
+    public void Update(Tile tile)
     {
-        int chunkX = x / chunkSize;
-        int chunkOffsetX = x - chunkX * chunkSize;
-        int chunkY = y / chunkSize;
-        int chunkOffsetY = y - chunkY * chunkSize;
+        Update(tile.X, tile.Y);
+    }
+    public void Update(int x, int y)
+    {
+        if (y == -1 && y == map.Height)
+            return;
+        x = x == -1 ? map.Width - 1 : (x == map.Width ? 0 : x);
+        int chunkOffsetX;
+        int chunkOffsetY;
+        var chunkTex = GetChunk(x, y, out chunkOffsetX, out chunkOffsetY);
 
-        var chunkTex = chunks[chunkX, chunkY];
+        Color color = Color.clear;
+        if (map.Tiles[x, y].BorderCount > 0)
+            color = Color.black;
+        else
+        {
+            var province = map.Tiles[x,y].Province;
+            int ID = province.ID;
+            switch (province.Type)
+            {
+                case ProvinceType.Land:
+                    color = new Color(0.3f + (ID % 100) / 130f, 0.3f + (ID % 100) / 130f, 0.3f + (ID % 100) / 130f);
+                    break;
+                case ProvinceType.Sea:
+                    color = new Color(0.3f, 0.3f, 0.7f + (ID % 100) / 300f);
+                    break;
+                case ProvinceType.Lake:
+                    color = new Color(0.4f, 0.4f, 0.5f + (ID % 100) / 200f);
+                    break;
+            }
+        }
+
         chunkTex.SetPixel(chunkOffsetX, chunkOffsetY, color);
         forUpdate.Add(chunkTex);
 
     }
-    
-    
+
+    Texture2D GetChunk(int x, int y, out int chunkOffsetX, out int chunkOffsetY)
+    {
+        int chunkX = x / chunkSize;
+        chunkOffsetX = x - chunkX * chunkSize;
+        int chunkY = y / chunkSize;
+        chunkOffsetY = y - chunkY * chunkSize;
+        return chunks[chunkX, chunkY];
+    }
+
 }

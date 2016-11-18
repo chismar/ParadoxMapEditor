@@ -15,9 +15,7 @@ public class Tile
             owner = value;
             if (!owner.HasTile(this))
                 owner.AttachTile(this);
-            Changed = true;
         }
     }
-
-    public bool Changed = false;
+    public int BorderCount = 0;
 }
