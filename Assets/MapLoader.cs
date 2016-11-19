@@ -24,7 +24,8 @@ public class MapLoader : MonoBehaviour {
         Map = ScriptableObject.CreateInstance<Map>();
         shouldContinue = true;
         finished = false;
-        loadThread = new Thread(() => LoadFrom(ChosenProject.Directory));
+        var dir = PlayerPrefs.GetString("directory");
+        loadThread = new Thread(() => LoadFrom(dir));
         loadThread.Start();
         StartCoroutine(ThreadWatchdog());
     }
@@ -124,7 +125,16 @@ public class MapLoader : MonoBehaviour {
             for (int x = 0; x < provincesMap.Width; x++)
             {
                 for (int y = 0; y < provincesMap.Height; y++)
-                    Map.AssignTileTo(x, y, provincesByColor[provincesMap.GetPixel(x, provincesMap.Height - 1 - y)]);
+                {
+                    var color = provincesMap.GetPixel(x, provincesMap.Height - 1 - y);
+                    Province prov = null;
+                    if(provincesByColor.TryGetValue(color, out prov))
+                        Map.AssignTileTo(x, y, prov);
+                    else
+                    {
+                        UnityEngine.Debug.LogWarningFormat("Cant find a province with a color: {0} {1} {2} in position: {3} {4}", color.R, color.G, color.B, x, y);
+                    }
+                }
                 lock (ProgressBar)
                     ProgressBar.Progress = x;
             }
@@ -168,9 +178,11 @@ public class MapLoader : MonoBehaviour {
                 //lock (ProgressLock)
                 //    CurrentProgress++;
             }
+            provincesByColor.Clear();
             foreach ( var province in provinces)
             {
                 province.MapUniqueColor = province.SerializedColor();
+                provincesByColor.Add(province.MapUniqueColor, province);
             }
             Debug.Log("Setting map data");
 

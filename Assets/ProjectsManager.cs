@@ -6,8 +6,7 @@ using System.Text;
 using UnityEngine.SceneManagement;
 
 public class ProjectsManager : MonoBehaviour {
-
-    public Project DefaultProject;
+    
     public List<Project> Projects = new List<Project>();
 	public void ImportProject(string name, string directory)
     {
@@ -55,10 +54,7 @@ public class ProjectsManager : MonoBehaviour {
     }
     public void LoadProject(Project proj)
     {
-        FindObjectOfType<ChosenProjectData>().ChosenProject = proj;
-        DefaultProject.Name = proj.Name;
-        DefaultProject.Directory = proj.Directory;
-        DefaultProject.Date = proj.Date;
+        PlayerPrefs.SetString("directory", proj.Directory);
         SceneManager.LoadScene(1);
     }
 }

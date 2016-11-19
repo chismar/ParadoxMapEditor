@@ -215,6 +215,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 93841780}
   - 114: {fileID: 93841781}
+  - 114: {fileID: 93841782}
   m_Layer: 0
   m_Name: MapRenderer
   m_TagString: Untagged
@@ -254,6 +255,17 @@ MonoBehaviour:
   MapLoader: {fileID: 2145417633}
   ProgressBar: {fileID: 1055769780}
   ChunkProto: {fileID: 1000014194060014, guid: e13d7d5065b71a14c90bb571d7f74b87, type: 2}
+--- !u!114 &93841782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 93841779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f759b7482a2e3c47a049cb7acdac1c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &431169187
 GameObject:
   m_ObjectHideFlags: 0
@@ -729,7 +741,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 351, y: -25}
+  m_AnchoredPosition: {x: 826, y: -25}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &986429895
@@ -952,7 +964,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Map: {fileID: 0}
-  Project: {fileID: 11400000, guid: de4ed173e0f05e74fa66457d21cdc74d, type: 2}
 --- !u!4 &1351213739
 Transform:
   m_ObjectHideFlags: 0
@@ -1436,7 +1447,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ProgressBar: {fileID: 1055769780}
   DebugMap: {fileID: 0}
-  ChosenProject: {fileID: 11400000, guid: de4ed173e0f05e74fa66457d21cdc74d, type: 2}
+  ChosenProject: {fileID: 0}
   Map: {fileID: 0}
   ProgressMax: 0
   CurrentProgress: 0

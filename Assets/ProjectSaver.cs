@@ -16,7 +16,6 @@ public class ProjectSaver : MonoBehaviour
         FindObjectOfType<MapModesAndControls>().RegisterCallback(SaveProject, "Save Project");
     }
     public Map Map;
-    public Project Project;
     public void SaveProject()
     {
         Map = FindObjectOfType<MapLoader>().Map;
@@ -29,27 +28,30 @@ public class ProjectSaver : MonoBehaviour
                 var tile = Map.Tiles[i, j];
                 pixels.SetPixel(tile.X, Map.Height - 1 - tile.Y, tile.Province.MapUniqueColor);
             }
-        pixels.Save(Project.Directory + "/provinces.png", ImageFormat.Png);
+        var dir = PlayerPrefs.GetString("directory");
+        pixels.Save(dir + "/provinces.png", ImageFormat.Png);
         var path = Application.dataPath + "/StreamingAssets/";
         Process process = new Process();
         process.StartInfo.FileName = path + "PngToBmpEncoder.exe";
-        process.StartInfo.Arguments = String.Format("{0} {1} {2}", "\"" + Project.Directory + "\"", "provinces.png", "provinces.bmp");
+        process.StartInfo.Arguments = String.Format("{0} {1} {2}", "\"" + dir + "\"", "provinces.png", "provinces.bmp");
         UnityEngine.Debug.Log(process.StartInfo.Arguments);
         process.StartInfo.CreateNoWindow = true;
         process.StartInfo.UseShellExecute = false;
         process.Start();
-        process.Exited += (o,e) => File.Delete(Project.Directory + "/provinces.png");
+        process.Exited += (o,e) => File.Delete(dir + "/provinces.png");
         //Ends here
 
 
 
-        var defStream = File.Create(Project.Directory + "/definition.csv");
-        var adjStream = File.Create(Project.Directory + "/adjacencies.csv");
+        var defStream = File.Create(dir + "/definition.csv");
+        var adjStream = File.Create(dir + "/adjacencies.csv");
         
         var encoder = new UTF8Encoding();
         StringBuilder builder = new StringBuilder();
         foreach(var province in Map.Provinces)
         {
+            if (province.Tiles.Count == 0)
+                continue;
             builder.Length = 0;
             builder.Append(province.ID).Append(';');
             builder.Append(province.MapUniqueColor.R).Append(';');
