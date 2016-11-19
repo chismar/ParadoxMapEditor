@@ -65,12 +65,15 @@ public class MapLoader : MonoBehaviour {
             List<Province> provinces = new List<Province>();
             Dictionary<int, Province> provincesByID = new Dictionary<int, Province>();
             Dictionary<System.Drawing.Color, Province> provincesByColor = new Dictionary<System.Drawing.Color, Province>();
+            int maxID = 0;
             for ( int i = 0; i < provincesFile.Length; i++)
             {
                 var province = new Province();
                 var stringData = provincesFile[i].Split(';');
             
                 province.ID = int.Parse(stringData[0]);
+                if (province.ID > maxID)
+                    maxID = province.ID;
                 var red = byte.Parse(stringData[1]);
                 var green = byte.Parse(stringData[2]);
                 var blue = byte.Parse(stringData[3]);
@@ -174,7 +177,7 @@ public class MapLoader : MonoBehaviour {
             Map.Provinces = provinces;
             Map.ColorCodedProvinces = provincesByColor;
             Map.ProvincesByID = provincesByID;
-
+            Map.NextID = maxID + 1;
             Debug.Log("Map data set");
             shouldContinue = false;
             finished = true;

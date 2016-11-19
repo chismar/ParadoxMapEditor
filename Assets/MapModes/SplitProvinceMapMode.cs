@@ -72,6 +72,8 @@ public class SplitProvinceMapMode : MapMode
     List<TileData> tilesData = new List<TileData>();
     public override void OnLeft(int x, int y)
     {
+
+        Debug.Log("Splitting province");
         var selectedProv = Map.Tiles[x, y].Province;
         int midX = 0;
         int midY = 0;
@@ -85,12 +87,14 @@ public class SplitProvinceMapMode : MapMode
         Vector2 startPoint = new Vector2(x, y);
         Vector2 pivot = new Vector2(midX, midY);
         float stepAngle = 360f / splitCount;
+        Debug.LogFormat("Tiles count: {0}, Start point: {1}, Pivot: {2}, Split count: {3}", selectedProv.Tiles.Count, startPoint, pivot, splitCount);
         splitCenters.Clear();
         splitCenters.Add(startPoint);
         for (int i = 1; i < splitCount; i++)
         {
             Vector2 otherPoint = RotatePointAroundPivot(startPoint, pivot, stepAngle * i);
             splitCenters.Add(otherPoint);
+            Debug.Log(otherPoint);
         }
 
         tilesData.Clear();
@@ -102,13 +106,15 @@ public class SplitProvinceMapMode : MapMode
             for (int j = 0; j < splitCenters.Count; j++)
             {
                 var splitCenter = splitCenters[j];
-                float distance = Mathf.Abs((float)tileData.Tile.X - splitCenter.x) + Mathf.Abs((float)tileData.Tile.Y - splitCenter.y);
+                float distance = (new Vector2(tileData.Tile.X, tileData.Tile.Y) - splitCenter).sqrMagnitude;
                 if (distance < tileData.Distance)
                 {
                     tileData.Distance = distance;
                     tileData.SplitCenter = j;
                 }
             }
+            tilesData[i] = tileData;
+            //Debug.Log(tileData.SplitCenter);
         }
         splitProvinces.Clear();
         for (int i = 0; i < splitCount; i++)
@@ -119,6 +125,8 @@ public class SplitProvinceMapMode : MapMode
             var tileData = tilesData[i];
             Map.AssignTileTo(tileData.Tile.X, tileData.Tile.Y, splitProvinces[tileData.SplitCenter]);
         }
+        for ( int i =0; i < tilesData.Count; i++)
+            Renderer.Update(tilesData[i].Tile);
 
 
     }

@@ -9,7 +9,7 @@ public class Map : ScriptableObject
     public Tile[,] Tiles;
     public int Width;
     public int Height;
-
+    public int NextID;
     public void AssignTileTo(int x, int y, Province province)
     {
         if (x < 0 || x >= Width || y < 0 || y >= Height)
@@ -89,7 +89,7 @@ public class Map : ScriptableObject
             p.SomeBool = someBool;
             p.OtherType = otherType;
             p.Continent = continent;
-            p.ID = Provinces.Count;
+            p.ID = NextID++;
             p.MapUniqueColor = p.SerializedColor();
             Provinces.Add(p);
             ProvincesByID.Add(p.ID, p);
