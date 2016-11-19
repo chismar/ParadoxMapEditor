@@ -57,6 +57,7 @@ public class MapRenderer : MonoBehaviour
             for (int j = 0; j < chunksHeight; j++)
             {
                 var chunkTex = new Texture2D(chunkSize, chunkSize);
+                chunkTex.filterMode = FilterMode.Point;
                 chunks[i, j] = chunkTex;
                 GameObject chunkGo = GameObject.Instantiate(ChunkProto);
                 var chunkData = chunkGo.GetComponent<ChunkMapController>();
