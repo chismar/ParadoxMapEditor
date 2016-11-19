@@ -44,6 +44,7 @@ public class Controller : MonoBehaviour
 
     public void OnPointerClick(int x, int y, PointerEventData.InputButton button)
     {
+        //Debug.Log("click!");
         if (CurrentMapMode == null)
             return;
         if (button == PointerEventData.InputButton.Left)

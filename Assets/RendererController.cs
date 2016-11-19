@@ -3,38 +3,39 @@ using System.Collections;
 
 public class RendererController : MonoBehaviour {
 
-    Transform transform;
 
+    Camera cam;
+    public float Speed;
     void Awake()
     {
-        transform = base.transform;
+        cam = GetComponent<Camera>();
     }
 	void Update()
     {
-        if(Input.GetKeyDown(KeyCode.W))
+        if(Input.GetKey(KeyCode.W))
         {
-            transform.position += Vector3.up;
+            transform.position += Vector3.up * Time.deltaTime * Speed * cam.orthographicSize;
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKey(KeyCode.A))
         {
-            transform.position += Vector3.left;
+            transform.position += Vector3.left * Time.deltaTime * Speed * cam.orthographicSize;
         }
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKey(KeyCode.S))
         {
-            transform.position += Vector3.down;
+            transform.position += Vector3.down * Time.deltaTime * Speed * cam.orthographicSize;
         }
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKey(KeyCode.D))
         {
-            transform.position += Vector3.right;
+            transform.position += Vector3.right * Time.deltaTime * Speed * cam.orthographicSize;
         }
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKey(KeyCode.Q))
         {
-            transform.localScale *= 0.9f;
+            cam.orthographicSize *= 0.9f;
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKey(KeyCode.E))
         {
 
-            transform.localScale *= 1.2f;
+            cam.orthographicSize *= 1.2f;
         }
     }
 }

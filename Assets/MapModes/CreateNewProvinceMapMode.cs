@@ -50,7 +50,7 @@ public class CreateNewProvinceMapMode : MapMode
             }
 
             float scale = brushSize / Border.sizeDelta.x;
-            Border.localScale = new Vector3(scale, scale, 1);
+            Border.localScale = new Vector3(scale, scale, 1) * Renderer.transform.localScale.x;
             Border.position = Input.mousePosition;
 
         }

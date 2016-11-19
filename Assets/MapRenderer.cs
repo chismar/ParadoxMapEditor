@@ -40,7 +40,7 @@ public class MapRenderer : MonoBehaviour
     Texture2D[,] chunks;
     List<GameObject> chunkGOs = new List<GameObject>();
     HashSet<Texture2D> forUpdate = new HashSet<Texture2D>();
-    int chunkSize = 64;
+    int chunkSize = 512;
     IEnumerator CurrentCoroutine;
 
     IEnumerator CreateChunks()
@@ -49,8 +49,8 @@ public class MapRenderer : MonoBehaviour
         foreach (var chunkGO in chunkGOs)
             Destroy(chunkGO);
         chunkGOs.Clear();
-        int chunksWidth = (map.Width / chunkSize + 1);
-        int chunksHeight = (map.Height / chunkSize + 1);
+        int chunksWidth = (map.Width / chunkSize + (map.Width % chunkSize == 0 ? 0 : 1));
+        int chunksHeight = (map.Height / chunkSize + (map.Height % chunkSize == 0 ? 0 : 1));
         chunks = new Texture2D[chunksWidth, chunksHeight];
         var time = Time.realtimeSinceStartup;
         for (int i = 0; i < chunksWidth; i++)
