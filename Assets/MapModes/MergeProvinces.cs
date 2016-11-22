@@ -37,6 +37,7 @@ public class MergeProvinces : MapMode
     public override void OnLeft(int x, int y)
     {
         selectedProvince = Map.Tiles[x, y].Province;
+        Renderer.LitUpProvince(selectedProvince);
         provinceSelection.text = "Province selected: " + selectedProvince.ID;
 
     }

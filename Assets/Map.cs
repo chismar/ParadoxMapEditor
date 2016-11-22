@@ -6,10 +6,14 @@ public class Map : ScriptableObject
     public List<Province> Provinces;
     public Dictionary<int, Province> ProvincesByID;
     public Dictionary<System.Drawing.Color, Province> ColorCodedProvinces;
+    public List<State> States;
+    public List<StrategicRegion> StrategicRegions;
+    public List<SupplyArea> SupplyAreas;
     public Tile[,] Tiles;
     public int Width;
     public int Height;
     public int NextID;
+
     public void AssignTileTo(int x, int y, Province province)
     {
         if (x < 0 || x >= Width || y < 0 || y >= Height)
@@ -75,8 +79,8 @@ public class Map : ScriptableObject
         }
         
     }
-    Stack<Province> emptyProvinces = new Stack<Province>();
 
+    Stack<Province> emptyProvinces = new Stack<Province>();
     public Province CreateNewProvince(ProvinceType type, bool someBool, string otherType, int continent)
     {
         Province p = null;

@@ -1,0 +1,515 @@
+Parse tree from test.def:
+ROOT(2001)
+  IDENTIFIER(1023): "name_generator", line: 1, col: 1
+  EQUALS(1011): "=", line: 1, col: 16
+  CONTEXT(2004)
+    OPEN_TABLE(1002): "{", line: 2, col: 1
+    OPSORATOMS(2005)
+      IdOrCallOrScope(2007)
+        IDENTIFIER(1023): "scope", line: 4, col: 2
+      OPSORATOMSTAILS(2006)
+        EQUALS(1011): "=", line: 4, col: 8
+        CONTEXT(2004)
+          EXPRESSION(2023)
+            ORTERM(2021)
+              ANDTERM(2019)
+                EQTERM(2017)
+                  RELATTERM(2015)
+                    ADDITTERM(2013)
+                      MULTTERM(2011)
+                        FACTOR(2010)
+                          ATOMORIdOrCallOrScope(2009)
+                            IdOrCallOrScope(2007)
+                              IDENTIFIER(1023): "has_name", line: 4, col: 10
+        OPERATOR(2003)
+          IdOrCallOrScope(2007)
+            IDENTIFIER(1023): "action", line: 5, col: 2
+          EQUALS(1011): "=", line: 5, col: 9
+          CONTEXT(2004)
+            OPEN_TABLE(1002): "{", line: 6, col: 2
+            OPSORATOMS(2005)
+              IdOrCallOrScope(2007)
+                IDENTIFIER(1023): "set_name", line: 7, col: 3
+              OPSORATOMSTAILS(2006)
+                EQUALS(1011): "=", line: 7, col: 12
+                CONTEXT(2004)
+                  EXPRESSION(2023)
+                    ORTERM(2021)
+                      ANDTERM(2019)
+                        EQTERM(2017)
+                          RELATTERM(2015)
+                            ADDITTERM(2013)
+                              MULTTERM(2011)
+                                FACTOR(2010)
+                                  ATOMORIdOrCallOrScope(2009)
+                                    IdOrCallOrScope(2007)
+                                      IDENTIFIER(1023): "concat", line: 7, col: 14
+                                      OPEN_PARENT(1006): "(", line: 7, col: 20
+                                      EXPRESSION(2023)
+                                        ORTERM(2021)
+                                          ANDTERM(2019)
+                                            EQTERM(2017)
+                                              RELATTERM(2015)
+                                                ADDITTERM(2013)
+                                                  MULTTERM(2011)
+                                                    FACTOR(2010)
+                                                      ATOMORIdOrCallOrScope(2009)
+                                                        IdOrCallOrScope(2007)
+                                                          IDENTIFIER(1023): "random_from", line: 7, col: 21
+                                                          OPEN_PARENT(1006): "(", line: 7, col: 32
+                                                          EXPRESSION(2023)
+                                                            ORTERM(2021)
+                                                              ANDTERM(2019)
+                                                                EQTERM(2017)
+                                                                  RELATTERM(2015)
+                                                                    ADDITTERM(2013)
+                                                                      MULTTERM(2011)
+                                                                        FACTOR(2010)
+                                                                          ATOMORIdOrCallOrScope(2009)
+                                                                            IdOrCallOrScope(2007)
+                                                                              IDENTIFIER(1023): "names_scope", line: 7, col: 33
+                                                          DELIMITER(1005): ",", line: 7, col: 44
+                                                          EXPRESSION(2023)
+                                                            ORTERM(2021)
+                                                              ANDTERM(2019)
+                                                                EQTERM(2017)
+                                                                  RELATTERM(2015)
+                                                                    ADDITTERM(2013)
+                                                                      MULTTERM(2011)
+                                                                        FACTOR(2010)
+                                                                          ATOMORIdOrCallOrScope(2009)
+                                                                            IdOrCallOrScope(2007)
+                                                                              IDENTIFIER(1023): "most_weight", line: 7, col: 46
+                                                                              OPEN_PARENT(1006): "(", line: 7, col: 57
+                                                                              EXPRESSION(2023)
+                                                                                ORTERM(2021)
+                                                                                  ANDTERM(2019)
+                                                                                    EQTERM(2017)
+                                                                                      RELATTERM(2015)
+                                                                                        ADDITTERM(2013)
+                                                                                          MULTTERM(2011)
+                                                                                            FACTOR(2010)
+                                                                                              ATOMORIdOrCallOrScope(2009)
+                                                                                                IdOrCallOrScope(2007)
+                                                                                                  IDENTIFIER(1023): "fallback_names", line: 7, col: 58
+                                                                              DELIMITER(1005): ",", line: 7, col: 72
+                                                                              EXPRESSION(2023)
+                                                                                ORTERM(2021)
+                                                                                  ANDTERM(2019)
+                                                                                    EQTERM(2017)
+                                                                                      RELATTERM(2015)
+                                                                                        ADDITTERM(2013)
+                                                                                          MULTTERM(2011)
+                                                                                            FACTOR(2010)
+                                                                                              ATOMORIdOrCallOrScope(2009)
+                                                                                                IdOrCallOrScope(2007)
+                                                                                                  IDENTIFIER(1023): "new_name", line: 7, col: 74
+                                                                                                  OPEN_PARENT(1006): "(", line: 7, col: 82
+                                                                                                  EXPRESSION(2023)
+                                                                                                    ORTERM(2021)
+                                                                                                      ANDTERM(2019)
+                                                                                                        EQTERM(2017)
+                                                                                                          RELATTERM(2015)
+                                                                                                            ADDITTERM(2013)
+                                                                                                              MULTTERM(2011)
+                                                                                                                FACTOR(2010)
+                                                                                                                  ATOMORIdOrCallOrScope(2009)
+                                                                                                                    IdOrCallOrScope(2007)
+                                                                                                                      IDENTIFIER(1023): "culture_names", line: 7, col: 83
+                                                                                                  DELIMITER(1005): ",", line: 7, col: 96
+                                                                                                  EXPRESSION(2023)
+                                                                                                    ORTERM(2021)
+                                                                                                      ANDTERM(2019)
+                                                                                                        EQTERM(2017)
+                                                                                                          RELATTERM(2015)
+                                                                                                            ADDITTERM(2013)
+                                                                                                              MULTTERM(2011)
+                                                                                                                FACTOR(2010)
+                                                                                                                  ATOMORIdOrCallOrScope(2009)
+                                                                                                                    ATOM(2008)
+                                                                                                                      STRING(1025): ""Error name"", line: 7, col: 98
+                                                                                                  CLOSE_PARENT(1007): ")", line: 7, col: 110
+                                                                              CLOSE_PARENT(1007): ")", line: 7, col: 111
+                                                          CLOSE_PARENT(1007): ")", line: 7, col: 112
+                                      DELIMITER(1005): ",", line: 7, col: 113
+                                      EXPRESSION(2023)
+                                        ORTERM(2021)
+                                          ANDTERM(2019)
+                                            EQTERM(2017)
+                                              RELATTERM(2015)
+                                                ADDITTERM(2013)
+                                                  MULTTERM(2011)
+                                                    FACTOR(2010)
+                                                      ATOMORIdOrCallOrScope(2009)
+                                                        ATOM(2008)
+                                                          STRING(1025): "" "", line: 8, col: 8
+                                      DELIMITER(1005): ",", line: 8, col: 11
+                                      EXPRESSION(2023)
+                                        ORTERM(2021)
+                                          ANDTERM(2019)
+                                            EQTERM(2017)
+                                              RELATTERM(2015)
+                                                ADDITTERM(2013)
+                                                  MULTTERM(2011)
+                                                    FACTOR(2010)
+                                                      ATOMORIdOrCallOrScope(2009)
+                                                        IdOrCallOrScope(2007)
+                                                          IDENTIFIER(1023): "single_from", line: 9, col: 8
+                                                          OPEN_PARENT(1006): "(", line: 9, col: 19
+                                                          EXPRESSION(2023)
+                                                            ORTERM(2021)
+                                                              ANDTERM(2019)
+                                                                EQTERM(2017)
+                                                                  RELATTERM(2015)
+                                                                    ADDITTERM(2013)
+                                                                      MULTTERM(2011)
+                                                                        FACTOR(2010)
+                                                                          ATOMORIdOrCallOrScope(2009)
+                                                                            IdOrCallOrScope(2007)
+                                                                              IDENTIFIER(1023): "second_name", line: 9, col: 20
+                                                          DELIMITER(1005): ",", line: 9, col: 31
+                                                          EXPRESSION(2023)
+                                                            ORTERM(2021)
+                                                              ANDTERM(2019)
+                                                                EQTERM(2017)
+                                                                  RELATTERM(2015)
+                                                                    ADDITTERM(2013)
+                                                                      MULTTERM(2011)
+                                                                        FACTOR(2010)
+                                                                          ATOMORIdOrCallOrScope(2009)
+                                                                            ATOM(2008)
+                                                                              STRING(1025): ""Error second name"", line: 9, col: 33
+                                                          CLOSE_PARENT(1007): ")", line: 9, col: 52
+                                      CLOSE_PARENT(1007): ")", line: 9, col: 53
+                OPERATOR(2003)
+                  IdOrCallOrScope(2007)
+                    IDENTIFIER(1023): "names_scope", line: 10, col: 3
+                  EQUALS(1011): "=", line: 10, col: 15
+                  CONTEXT(2004)
+                    OPEN_TABLE(1002): "{", line: 11, col: 3
+                    OPSORATOMS(2005)
+                      IdOrCallOrScope(2007)
+                        IDENTIFIER(1023): "union", line: 12, col: 4
+                      OPSORATOMSTAILS(2006)
+                        EQUALS(1011): "=", line: 12, col: 10
+                        CONTEXT(2004)
+                          OPEN_TABLE(1002): "{", line: 12, col: 12
+                          OPSORATOMS(2005)
+                            IdOrCallOrScope(2007)
+                              IDENTIFIER(1023): "faction_names", line: 12, col: 13
+                            OPSORATOMSTAILS(2006)
+                              ATOMORIdOrCallOrScope(2009)
+                                IdOrCallOrScope(2007)
+                                  IDENTIFIER(1023): "traits_names", line: 12, col: 27
+                          CLOSE_TABLE(1003): "}", line: 12, col: 39
+                        OPERATOR(2003)
+                          IdOrCallOrScope(2007)
+                            IDENTIFIER(1023): "intersect", line: 13, col: 4
+                          EQUALS(1011): "=", line: 13, col: 14
+                          CONTEXT(2004)
+                            EXPRESSION(2023)
+                              ORTERM(2021)
+                                ANDTERM(2019)
+                                  EQTERM(2017)
+                                    RELATTERM(2015)
+                                      ADDITTERM(2013)
+                                        MULTTERM(2011)
+                                          FACTOR(2010)
+                                            ATOMORIdOrCallOrScope(2009)
+                                              IdOrCallOrScope(2007)
+                                                IDENTIFIER(1023): "culture_names", line: 13, col: 16
+                    CLOSE_TABLE(1003): "}", line: 14, col: 3
+                OPERATOR(2003)
+                  IdOrCallOrScope(2007)
+                    IDENTIFIER(1023): "fallback_names", line: 15, col: 3
+                  EQUALS(1011): "=", line: 15, col: 18
+                  CONTEXT(2004)
+                    OPEN_TABLE(1002): "{", line: 16, col: 3
+                    OPSORATOMS(2005)
+                      IdOrCallOrScope(2007)
+                        IDENTIFIER(1023): "union", line: 17, col: 4
+                      OPSORATOMSTAILS(2006)
+                        EQUALS(1011): "=", line: 17, col: 10
+                        CONTEXT(2004)
+                          OPEN_TABLE(1002): "{", line: 17, col: 12
+                          OPSORATOMS(2005)
+                            IdOrCallOrScope(2007)
+                              IDENTIFIER(1023): "faction_names", line: 17, col: 13
+                            OPSORATOMSTAILS(2006)
+                              ATOMORIdOrCallOrScope(2009)
+                                IdOrCallOrScope(2007)
+                                  IDENTIFIER(1023): "traits_names", line: 17, col: 27
+                          CLOSE_TABLE(1003): "}", line: 17, col: 39
+                        OPERATOR(2003)
+                          IdOrCallOrScope(2007)
+                            IDENTIFIER(1023): "weight", line: 18, col: 4
+                          EQUALS(1011): "=", line: 18, col: 11
+                          CONTEXT(2004)
+                            EXPRESSION(2023)
+                              ORTERM(2021)
+                                ANDTERM(2019)
+                                  EQTERM(2017)
+                                    RELATTERM(2015)
+                                      ADDITTERM(2013)
+                                        MULTTERM(2011)
+                                          FACTOR(2010)
+                                            ATOMORIdOrCallOrScope(2009)
+                                              IdOrCallOrScope(2007)
+                                                IDENTIFIER(1023): "similar_traits", line: 18, col: 13
+                                                OPEN_PARENT(1006): "(", line: 18, col: 27
+                                                EXPRESSION(2023)
+                                                  ORTERM(2021)
+                                                    ANDTERM(2019)
+                                                      EQTERM(2017)
+                                                        RELATTERM(2015)
+                                                          ADDITTERM(2013)
+                                                            MULTTERM(2011)
+                                                              FACTOR(2010)
+                                                                ATOMORIdOrCallOrScope(2009)
+                                                                  IdOrCallOrScope(2007)
+                                                                    IDENTIFIER(1023): "traits_names", line: 18, col: 28
+                                                CLOSE_PARENT(1007): ")", line: 18, col: 40
+                    CLOSE_TABLE(1003): "}", line: 19, col: 3
+                OPERATOR(2003)
+                  IdOrCallOrScope(2007)
+                    IDENTIFIER(1023): "second_name", line: 20, col: 3
+                  EQUALS(1011): "=", line: 20, col: 15
+                  CONTEXT(2004)
+                    OPEN_TABLE(1002): "{", line: 21, col: 3
+                    OPSORATOMS(2005)
+                      IdOrCallOrScope(2007)
+                        IDENTIFIER(1023): "if", line: 22, col: 4
+                        OPEN_PARENT(1006): "(", line: 22, col: 6
+                        EXPRESSION(2023)
+                          ORTERM(2021)
+                            ANDTERM(2019)
+                              EQTERM(2017)
+                                RELATTERM(2015)
+                                  ADDITTERM(2013)
+                                    MULTTERM(2011)
+                                      FACTOR(2010)
+                                        ATOMORIdOrCallOrScope(2009)
+                                          IdOrCallOrScope(2007)
+                                            IDENTIFIER(1023): "sex", line: 22, col: 7
+                                EQTERMTAIL(2018)
+                                  EQUALS(1011): "=", line: 22, col: 11
+                                  EQTERM(2017)
+                                    RELATTERM(2015)
+                                      ADDITTERM(2013)
+                                        MULTTERM(2011)
+                                          FACTOR(2010)
+                                            ATOMORIdOrCallOrScope(2009)
+                                              IdOrCallOrScope(2007)
+                                                IDENTIFIER(1023): "female", line: 22, col: 13
+                              ANDTERMTAIL(2020)
+                                AND(1008): "and", line: 22, col: 20
+                                ANDTERM(2019)
+                                  EQTERM(2017)
+                                    RELATTERM(2015)
+                                      ADDITTERM(2013)
+                                        MULTTERM(2011)
+                                          FACTOR(2010)
+                                            ATOMORIdOrCallOrScope(2009)
+                                              IdOrCallOrScope(2007)
+                                                IDENTIFIER(1023): "family_status", line: 22, col: 24
+                                    EQTERMTAIL(2018)
+                                      EQUALS(1011): "=", line: 22, col: 38
+                                      EQTERM(2017)
+                                        RELATTERM(2015)
+                                          ADDITTERM(2013)
+                                            MULTTERM(2011)
+                                              FACTOR(2010)
+                                                ATOMORIdOrCallOrScope(2009)
+                                                  IdOrCallOrScope(2007)
+                                                    IDENTIFIER(1023): "married", line: 22, col: 40
+                        DELIMITER(1005): ",", line: 22, col: 47
+                        EXPRESSION(2023)
+                          ORTERM(2021)
+                            ANDTERM(2019)
+                              EQTERM(2017)
+                                RELATTERM(2015)
+                                  ADDITTERM(2013)
+                                    MULTTERM(2011)
+                                      FACTOR(2010)
+                                        ATOMORIdOrCallOrScope(2009)
+                                          IdOrCallOrScope(2007)
+                                            IDENTIFIER(1023): "h_name", line: 22, col: 49
+                        CLOSE_PARENT(1007): ")", line: 22, col: 55
+                      OPSORATOMSTAILS(2006)
+                        EQUALS(1011): "=", line: 22, col: 57
+                        CONTEXT(2004)
+                          OPEN_TABLE(1002): "{", line: 22, col: 59
+                          OPSORATOMS(2005)
+                            IdOrCallOrScope(2007)
+                              IDENTIFIER(1023): "union", line: 22, col: 60
+                            OPSORATOMSTAILS(2006)
+                              EQUALS(1011): "=", line: 22, col: 66
+                              CONTEXT(2004)
+                                EXPRESSION(2023)
+                                  ORTERM(2021)
+                                    ANDTERM(2019)
+                                      EQTERM(2017)
+                                        RELATTERM(2015)
+                                          ADDITTERM(2013)
+                                            MULTTERM(2011)
+                                              FACTOR(2010)
+                                                ATOMORIdOrCallOrScope(2009)
+                                                  IdOrCallOrScope(2007)
+                                                    IDENTIFIER(1023): "husband_name", line: 22, col: 68
+                          CLOSE_TABLE(1003): "}", line: 22, col: 80
+                        OPERATOR(2003)
+                          IdOrCallOrScope(2007)
+                            IDENTIFIER(1023): "if", line: 23, col: 4
+                            OPEN_PARENT(1006): "(", line: 23, col: 6
+                            EXPRESSION(2023)
+                              ORTERM(2021)
+                                ANDTERM(2019)
+                                  EQTERM(2017)
+                                    RELATTERM(2015)
+                                      ADDITTERM(2013)
+                                        MULTTERM(2011)
+                                          FACTOR(2010)
+                                            ATOMORIdOrCallOrScope(2009)
+                                              IdOrCallOrScope(2007)
+                                                IDENTIFIER(1023): "has_family", line: 23, col: 7
+                                  ANDTERMTAIL(2020)
+                                    AND(1008): "and", line: 23, col: 18
+                                    ANDTERM(2019)
+                                      EQTERM(2017)
+                                        RELATTERM(2015)
+                                          ADDITTERM(2013)
+                                            MULTTERM(2011)
+                                              FACTOR(2010)
+                                                NOT(1010): "not", line: 23, col: 22
+                                                ATOMORIdOrCallOrScope(2009)
+                                                  IdOrCallOrScope(2007)
+                                                    IDENTIFIER(1023): "h_name", line: 23, col: 26
+                            DELIMITER(1005): ",", line: 23, col: 32
+                            EXPRESSION(2023)
+                              ORTERM(2021)
+                                ANDTERM(2019)
+                                  EQTERM(2017)
+                                    RELATTERM(2015)
+                                      ADDITTERM(2013)
+                                        MULTTERM(2011)
+                                          FACTOR(2010)
+                                            ATOMORIdOrCallOrScope(2009)
+                                              IdOrCallOrScope(2007)
+                                                IDENTIFIER(1023): "f_name", line: 23, col: 34
+                            CLOSE_PARENT(1007): ")", line: 23, col: 40
+                          EQUALS(1011): "=", line: 23, col: 42
+                          CONTEXT(2004)
+                            OPEN_TABLE(1002): "{", line: 23, col: 44
+                            OPSORATOMS(2005)
+                              IdOrCallOrScope(2007)
+                                IDENTIFIER(1023): "union", line: 23, col: 45
+                              OPSORATOMSTAILS(2006)
+                                EQUALS(1011): "=", line: 23, col: 51
+                                CONTEXT(2004)
+                                  EXPRESSION(2023)
+                                    ORTERM(2021)
+                                      ANDTERM(2019)
+                                        EQTERM(2017)
+                                          RELATTERM(2015)
+                                            ADDITTERM(2013)
+                                              MULTTERM(2011)
+                                                FACTOR(2010)
+                                                  ATOMORIdOrCallOrScope(2009)
+                                                    IdOrCallOrScope(2007)
+                                                      IDENTIFIER(1023): "family_name", line: 23, col: 53
+                            CLOSE_TABLE(1003): "}", line: 23, col: 64
+                        OPERATOR(2003)
+                          IdOrCallOrScope(2007)
+                            IDENTIFIER(1023): "if", line: 24, col: 4
+                            OPEN_PARENT(1006): "(", line: 24, col: 6
+                            EXPRESSION(2023)
+                              ORTERM(2021)
+                                ANDTERM(2019)
+                                  EQTERM(2017)
+                                    RELATTERM(2015)
+                                      ADDITTERM(2013)
+                                        MULTTERM(2011)
+                                          FACTOR(2010)
+                                            NOT(1010): "not", line: 24, col: 7
+                                            ATOMORIdOrCallOrScope(2009)
+                                              IdOrCallOrScope(2007)
+                                                IDENTIFIER(1023): "h_name", line: 24, col: 11
+                                  ANDTERMTAIL(2020)
+                                    AND(1008): "and", line: 24, col: 18
+                                    ANDTERM(2019)
+                                      EQTERM(2017)
+                                        RELATTERM(2015)
+                                          ADDITTERM(2013)
+                                            MULTTERM(2011)
+                                              FACTOR(2010)
+                                                NOT(1010): "not", line: 24, col: 22
+                                                ATOMORIdOrCallOrScope(2009)
+                                                  IdOrCallOrScope(2007)
+                                                    IDENTIFIER(1023): "f_name", line: 24, col: 26
+                            CLOSE_PARENT(1007): ")", line: 24, col: 32
+                          EQUALS(1011): "=", line: 24, col: 34
+                          CONTEXT(2004)
+                            OPEN_TABLE(1002): "{", line: 24, col: 36
+                            OPSORATOMS(2005)
+                              IdOrCallOrScope(2007)
+                                IDENTIFIER(1023): "union", line: 24, col: 37
+                              OPSORATOMSTAILS(2006)
+                                EQUALS(1011): "=", line: 24, col: 43
+                                CONTEXT(2004)
+                                  EXPRESSION(2023)
+                                    ORTERM(2021)
+                                      ANDTERM(2019)
+                                        EQTERM(2017)
+                                          RELATTERM(2015)
+                                            ADDITTERM(2013)
+                                              MULTTERM(2011)
+                                                FACTOR(2010)
+                                                  ATOMORIdOrCallOrScope(2009)
+                                                    IdOrCallOrScope(2007)
+                                                      IDENTIFIER(1023): "new_name", line: 24, col: 45
+                                                      OPEN_PARENT(1006): "(", line: 24, col: 53
+                                                      EXPRESSION(2023)
+                                                        ORTERM(2021)
+                                                          ANDTERM(2019)
+                                                            EQTERM(2017)
+                                                              RELATTERM(2015)
+                                                                ADDITTERM(2013)
+                                                                  MULTTERM(2011)
+                                                                    FACTOR(2010)
+                                                                      ATOMORIdOrCallOrScope(2009)
+                                                                        IdOrCallOrScope(2007)
+                                                                          IDENTIFIER(1023): "culture_second_names", line: 24, col: 54
+                                                      CLOSE_PARENT(1007): ")", line: 24, col: 74
+                            CLOSE_TABLE(1003): "}", line: 24, col: 75
+                    CLOSE_TABLE(1003): "}", line: 25, col: 3
+                OPERATOR(2003)
+                  IdOrCallOrScope(2007)
+                    IDENTIFIER(1023): "set", line: 26, col: 3
+                    OPEN_PARENT(1006): "(", line: 26, col: 6
+                    EXPRESSION(2023)
+                      ORTERM(2021)
+                        ANDTERM(2019)
+                          EQTERM(2017)
+                            RELATTERM(2015)
+                              ADDITTERM(2013)
+                                MULTTERM(2011)
+                                  FACTOR(2010)
+                                    ATOMORIdOrCallOrScope(2009)
+                                      IdOrCallOrScope(2007)
+                                        IDENTIFIER(1023): "generated", line: 26, col: 7
+                    CLOSE_PARENT(1007): ")", line: 26, col: 16
+                  EQUALS(1011): "=", line: 26, col: 18
+                  CONTEXT(2004)
+                    EXPRESSION(2023)
+                      ORTERM(2021)
+                        ANDTERM(2019)
+                          EQTERM(2017)
+                            RELATTERM(2015)
+                              ADDITTERM(2013)
+                                MULTTERM(2011)
+                                  FACTOR(2010)
+                                    ATOMORIdOrCallOrScope(2009)
+                                      IdOrCallOrScope(2007)
+                                        IDENTIFIER(1023): "true", line: 26, col: 20
+            CLOSE_TABLE(1003): "}", line: 27, col: 2
+    CLOSE_TABLE(1003): "}", line: 28, col: 1

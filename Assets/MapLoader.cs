@@ -47,14 +47,97 @@ public class MapLoader : MonoBehaviour {
     {
         shouldContinue = false;
     }
+
+    List<State> LoadStates(string basePath, Dictionary<int, Province> provinces)
+    {
+        List<State> states = new List<State>();
+        var files = Directory.GetFiles(basePath + "/history/states");
+        foreach ( var file in files)
+        {
+            State state = new State();
+            var table = ScriptsLoader.LoadScript(file);
+            state.ID = table.Get<ScriptValue>("id").IntValue();
+            state.Name = table.Get<ScriptValue>("name").StringValue();
+            state.Manpower = table.Get<ScriptValue>("manpower").IntValue();
+
+            var provincesList = table.Get<ScriptList>("provinces").List;
+            foreach ( var id in provincesList)
+            {
+                Province p = null;
+                if (provinces.TryGetValue(id, out p))
+                {
+
+                    //state.Provinces.Add(p);
+                    p.State = state;
+                }
+            }
+            states.Add(state);
+        }
+        return states;
+    }
+
+    List<StrategicRegion> LoadRegions(string basePath, Dictionary<int, Province> provinces)
+    {
+
+        List<StrategicRegion> regions = new List<StrategicRegion>();
+        var files = Directory.GetFiles(basePath + "/map/strategicregions");
+        foreach ( var file in files)
+        {
+            StrategicRegion region = new StrategicRegion();
+            var table = ScriptsLoader.LoadScript(file);
+            region.ID = table.Get<ScriptValue>("id").IntValue();
+            region.Name = table.Get<ScriptValue>("name").StringValue();
+            var provincesList = table.Get<ScriptList>("provinces").List;
+            foreach (var id in provincesList)
+            {
+                Province p = null;
+                if (provinces.TryGetValue(id, out p))
+                {
+
+                    //region.Provinces.Add(p);
+                    p.StrategicRegion = region;
+                }
+            }
+            regions.Add(region);
+        }
+        return regions;
+    }
+
+    List<SupplyArea> LoadAreas(string basePath, Dictionary<int, State> states)
+    {
+
+        List<SupplyArea> areas = new List<SupplyArea>();
+        var files = Directory.GetFiles(basePath + "/map/supplyareas");
+        foreach (var file in files)
+        {
+            SupplyArea area = new SupplyArea();
+            var table = ScriptsLoader.LoadScript(file);
+            area.ID = table.Get<ScriptValue>("id").IntValue();
+            area.SupplyValue = table.Get<ScriptValue>("value").IntValue();
+            area.Name = table.Get<ScriptValue>("name").StringValue();
+            var state = table.Get<ScriptList>("states").List;
+            foreach (var id in state)
+            {
+                State s = null;
+                if (states.TryGetValue(id, out s))
+                {
+                    //area.States.Add(s);
+                    s.Supply = area;
+                }
+            }
+            areas.Add(area);
+        }
+
+        return areas;
+    }
     void LoadFrom(string directory)
     {
         try
         {
             Debug.Log("Loading");
-            var provincesFile = File.ReadAllLines(directory + "/definition.csv");
-            var provincesMap = new Bitmap(directory + "/provinces.bmp");
-            var specialAdjanciesFile = File.ReadAllLines(directory + "/adjacencies.csv");
+            var provincesFile = File.ReadAllLines(directory + "map/definition.csv");
+            var provincesMap = new Bitmap(directory + "map/provinces.bmp");
+            var specialAdjanciesFile = File.ReadAllLines(directory + "map/adjacencies.csv");
             lock(Map)
             {
                 Map.Height = provincesMap.Height;
@@ -67,6 +150,7 @@ public class MapLoader : MonoBehaviour {
             Dictionary<int, Province> provincesByID = new Dictionary<int, Province>();
             Dictionary<System.Drawing.Color, Province> provincesByColor = new Dictionary<System.Drawing.Color, Province>();
             int maxID = 0;
+            HashSet<Color32> textureColors = new HashSet<Color32>();
             for ( int i = 0; i < provincesFile.Length; i++)
             {
                 var province = new Province();
@@ -89,13 +173,24 @@ public class MapLoader : MonoBehaviour {
                 province.MapUniqueColor = uniqueColor;
                 provincesByColor.Add(uniqueColor, province);
                 provincesByID.Add(province.ID, province);
-
+                Color32 color = new Color32(0, 0, 0, 0);
+                province.TextureColor(ref color);
+                if(!textureColors.Add(color))
+                {
+                    Debug.LogFormat("Duplicate {0} = {1} {2}", province.ID, color.r, color.g);
+                }
+                //Debug.LogFormat("{0} = {1} {2}", province.ID, color.r, color.g);
                 if (!shouldContinue)
                     return;
                 //lock (ProgressLock)
                 //    CurrentProgress++;
             }
-        
+            var states = LoadStates(directory, provincesByID);
+            var regions = LoadRegions(directory, provincesByID);
+            Dictionary<int, State> statesByID = new Dictionary<int, State>();
+            foreach (var state in states)
+                statesByID.Add(state.ID, state);
+            var areas = LoadAreas(directory, statesByID);
             //DebugMap = ReadBMPToTexture(directory + "/provinces.bmp");
             Debug.Log("Loaded provinces, now loading map");
         
@@ -190,6 +285,9 @@ public class MapLoader : MonoBehaviour {
             Map.ColorCodedProvinces = provincesByColor;
             Map.ProvincesByID = provincesByID;
             Map.NextID = maxID + 1;
+            Map.SupplyAreas = areas;
+            Map.StrategicRegions = regions;
+            Map.States = states;
             Debug.Log("Map data set");
             shouldContinue = false;
             finished = true;

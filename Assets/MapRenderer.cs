@@ -7,9 +7,21 @@ public class MapRenderer : MonoBehaviour
 {
     public MapLoader MapLoader;
     public LoaderProgressUI ProgressBar;
+    public Material mapMaterial;
+    int materialProvinceProp;
+    int materialStateProp;
+    int materialRegionProp;
+    int materialSupplyProp;
+
+    int stateOverlayProp;
     void Awake()
     {
         MapLoader.FinishedLoadingMap += () => { map = MapLoader.Map; FullRedraw(); };
+        materialProvinceProp = Shader.PropertyToID("_SelectedProvinceColor");
+        materialStateProp = Shader.PropertyToID("_SelectedStateColor");
+        materialRegionProp = Shader.PropertyToID("_SelectedRegionColor");
+        materialSupplyProp = Shader.PropertyToID("_SelectedSupplyColor");
+        stateOverlayProp = Shader.PropertyToID("_StateOverlay");
     }
 
     void Update()
@@ -128,32 +140,36 @@ public class MapRenderer : MonoBehaviour
         int chunkOffsetY;
         var chunkTex = GetChunk(x, y, out chunkOffsetX, out chunkOffsetY);
 
-        Color color = Color.clear;
-        if (map.Tiles[x, y].BorderCount > 0)
-            color = Color.black;
-        else
-        {
-            var province = map.Tiles[x,y].Province;
-            int ID = province.ID;
-            switch (province.Type)
-            {
-                case ProvinceType.Land:
-                    color = new Color(0.3f + (ID % 100) / 130f, 0.3f + (ID % 100) / 130f, 0.3f + (ID % 100) / 130f);
-                    break;
-                case ProvinceType.Sea:
-                    color = new Color(0.3f, 0.3f, 0.7f + (ID % 100) / 300f);
-                    break;
-                case ProvinceType.Lake:
-                    color = new Color(0.4f, 0.4f, 0.5f + (ID % 100) / 200f);
-                    break;
-            }
-        }
+        Color color = GetColorForTile(map.Tiles[x,y]);
 
         chunkTex.SetPixel(chunkOffsetX, chunkOffsetY, color);
+        
         forUpdate.Add(chunkTex);
 
     }
 
+    Color32 GetColorForTile(Tile tile)
+    {
+        Color32 color = Color.clear;
+        if (tile.BorderCount > 0)
+        {
+            if(tile.Province.StrategicRegion != null && tile.Province.StrategicRegion != null)
+            {
+
+                tile.Province.StrategicRegion.TextureColor(ref color);
+                tile.Province.State.Supply.TextureColor(ref color);
+            }
+        }
+        else
+        {
+            tile.Province.TextureColor(ref color);
+            if (tile.Province.State != null)
+                tile.Province.State.TextureColor(ref color);
+            else
+                color.a = 255;
+        }
+        return color;
+    }
     Texture2D GetChunk(int x, int y, out int chunkOffsetX, out int chunkOffsetY)
     {
         int chunkX = x / chunkSize;
@@ -161,6 +177,57 @@ public class MapRenderer : MonoBehaviour
         int chunkY = y / chunkSize;
         chunkOffsetY = y - chunkY * chunkSize;
         return chunks[chunkX, chunkY];
+    }
+
+    public void LitUpProvince(Province province)
+    {
+        if(province != null)
+        {
+            Color32 color = Color.clear;
+            province.TextureColor(ref color);
+            mapMaterial.SetColor(materialProvinceProp, color);
+            if(province.State != null)
+            {
+
+                province.State.TextureColor(ref color);
+                mapMaterial.SetColor(materialStateProp, color);
+                mapMaterial.SetFloat(stateOverlayProp, 1f);
+                if (province.State.Supply != null && province.StrategicRegion != null)
+                {
+
+                    province.State.Supply.TextureColor(ref color);
+                    mapMaterial.SetColor(materialSupplyProp, color);
+                    province.StrategicRegion.TextureColor(ref color);
+                    mapMaterial.SetColor(materialRegionProp, color);
+                }
+                else
+                {
+                    color = Color.white;
+                    mapMaterial.SetColor(materialSupplyProp, color);
+                    mapMaterial.SetColor(materialRegionProp, color);
+                    mapMaterial.SetFloat(stateOverlayProp, 0f);
+                }
+            }
+            else
+            {
+                color = Color.clear;
+                mapMaterial.SetColor(materialStateProp, color);
+            }
+            
+            
+
+        }
+        else
+        {
+
+            Color32 color = Color.clear;
+            mapMaterial.SetColor(materialProvinceProp, color);
+            mapMaterial.SetColor(materialStateProp, color);
+            color = Color.white;
+            mapMaterial.SetColor(materialSupplyProp, color);
+            mapMaterial.SetColor(materialRegionProp, color);
+            mapMaterial.SetFloat(stateOverlayProp, 0f);
+        }
     }
 
 }

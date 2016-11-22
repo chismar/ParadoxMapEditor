@@ -11,7 +11,6 @@ public class ChunkMapController : MonoBehaviour, IPointerDownHandler, IPointerCl
     public int MapOffsetY;
     public int Size;
     static Controller Controller;
-
     void Start()
     {
         transform = GetComponent<RectTransform>();

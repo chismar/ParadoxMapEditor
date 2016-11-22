@@ -76,6 +76,7 @@ public class CreateNewProvinceMapMode : MapMode
     public override void OnLeft(int x, int y)
     {
         selectedProvince = Map.CreateNewProvince(Type, SomeBool, OtherType, Continent);
+        Renderer.LitUpProvince(selectedProvince);
         provinceSelection.text = "Province created: " + selectedProvince.ID;
         OnRightDrag(x, y);
 

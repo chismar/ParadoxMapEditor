@@ -12,6 +12,11 @@ public class Province {
     public int Continent; // Probably continent
     public HashSet<Tile> Tiles = new HashSet<Tile>();
     public Dictionary<Province, Adjacency> Adjacencies = new Dictionary<Province, Adjacency>();
+    StrategicRegion region;
+    public StrategicRegion StrategicRegion { get { return region; } set { if (region == value) return; if (region != null) region.Provinces.Remove(this); region = value; region.Provinces.Add(this); } }
+    State state;
+    public State State { get { return state; } set { if (state == value) return; if (state != null) state.Provinces.Remove(this); state = value; state.Provinces.Add(this); } }
+
     public void AttachTile(Tile tile)
     {
         if(Tiles.Add(tile))
@@ -35,6 +40,12 @@ public class Province {
         int b = ID & 255;
         var color = System.Drawing.Color.FromArgb(r, g, b);
         return color;
+    }
+
+    public void TextureColor(ref Color32 color)
+    {
+        color.r = (byte)(ID & 255);
+        color.g = (byte)((ID >> 8) & 255);
     }
 
 

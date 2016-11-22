@@ -1,11 +1,17 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEngine;
 
-public class ProvinceSelectionMapMode : MapMode
+public class StatesMapMode : MapMode
 {
-
     Province selectedProvince;
+
+    public ProvinceType Type;
+    public bool SomeBool;
+    public int Continent;
+    string OtherType;
 
     float intermediateBrushSize = 3;
     int brushSize = 3;
@@ -21,7 +27,7 @@ public class ProvinceSelectionMapMode : MapMode
             controls = FindObjectOfType<MapModesAndControls>();
             controller = FindObjectOfType<Controller>();
         }
-        controls.RegisterCallback(() => controller.SelectMapMode(this), "Province selection");
+        controls.RegisterCallback(() => controller.SelectMapMode(this), "Province creation");
 
     }
 
@@ -72,9 +78,10 @@ public class ProvinceSelectionMapMode : MapMode
     }
     public override void OnLeft(int x, int y)
     {
-        selectedProvince = Map.Tiles[x, y].Province;
+        selectedProvince = Map.CreateNewProvince(Type, SomeBool, OtherType, Continent);
         Renderer.LitUpProvince(selectedProvince);
-        provinceSelection.text = "Province selected: " + selectedProvince.ID;
+        provinceSelection.text = "Province created: " + selectedProvince.ID;
+        OnRightDrag(x, y);
 
     }
     public override void OnRightClick(int x, int y)
