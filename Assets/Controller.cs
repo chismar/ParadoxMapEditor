@@ -15,6 +15,12 @@ public class Controller : MonoBehaviour
         loader.FinishedLoadingMap += () => { SelectMapMode(GetComponent<ProvinceSelectionMapMode>()); CurrentMapMode.Map = loader.Map; EnableAllMapModes(); };
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Escape))
+            Application.Quit();
+    }
+
     private void EnableAllMapModes()
     {
         var modes = GetComponents<MapMode>();

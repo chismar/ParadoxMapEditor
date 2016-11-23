@@ -85,6 +85,7 @@ public class MapRenderer : MonoBehaviour
                     yield return null;
             }
         chunksReady = true;
+        Camera.main.transform.position = new Vector3(map.Width/2, map.Height/2, -10);
     }
     IEnumerator RedrawCoroutine()
     {

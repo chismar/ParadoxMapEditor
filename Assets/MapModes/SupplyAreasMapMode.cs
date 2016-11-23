@@ -27,7 +27,7 @@ public class SupplyAreasMapMode : MapMode
             controls = FindObjectOfType<MapModesAndControls>();
             controller = FindObjectOfType<Controller>();
         }
-        controls.RegisterCallback(() => controller.SelectMapMode(this), "Province creation");
+        controls.RegisterCallback(() => controller.SelectMapMode(this), "Supply areas managmenet");
 
     }
 
