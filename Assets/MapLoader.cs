@@ -51,20 +51,28 @@ public class MapLoader : MonoBehaviour {
     List<State> LoadStates(string basePath, Dictionary<int, Province> provinces)
     {
         List<State> states = new List<State>();
+        Debug.Log("Loading states");
         var files = Directory.GetFiles(basePath + "/history/states");
+        lock (ProgressBar)
+        {
+            ProgressBar.MaxProgress = files.Length;
+            ProgressBar.Progress = 0;
+        }
+            
         foreach ( var file in files)
         {
             State state = new State();
             var table = ScriptsLoader.LoadScript(file);
+            //Debug.Log(table);
             state.ID = table.Get<ScriptValue>("id").IntValue();
             state.Name = table.Get<ScriptValue>("name").StringValue();
             state.Manpower = table.Get<ScriptValue>("manpower").IntValue();
 
-            var provincesList = table.Get<ScriptList>("provinces").List;
+            var provincesList = table.Get<ScriptList>("provinces").AllData;
             foreach ( var id in provincesList)
             {
                 Province p = null;
-                if (provinces.TryGetValue(id, out p))
+                if (provinces.TryGetValue(id.Key.IntValue(), out p))
                 {
 
                     //state.Provinces.Add(p);
@@ -72,26 +80,33 @@ public class MapLoader : MonoBehaviour {
                 }
             }
             states.Add(state);
+            lock (ProgressBar)
+                ProgressBar.Progress++;
         }
         return states;
     }
 
     List<StrategicRegion> LoadRegions(string basePath, Dictionary<int, Province> provinces)
     {
-
+        Debug.Log("Loading regions");
         List<StrategicRegion> regions = new List<StrategicRegion>();
         var files = Directory.GetFiles(basePath + "/map/strategicregions");
+        lock (ProgressBar)
+        {
+            ProgressBar.MaxProgress = files.Length;
+            ProgressBar.Progress = 0;
+        }
         foreach ( var file in files)
         {
             StrategicRegion region = new StrategicRegion();
             var table = ScriptsLoader.LoadScript(file);
             region.ID = table.Get<ScriptValue>("id").IntValue();
             region.Name = table.Get<ScriptValue>("name").StringValue();
-            var provincesList = table.Get<ScriptList>("provinces").List;
+            var provincesList = table.Get<ScriptList>("provinces").AllData;
             foreach (var id in provincesList)
             {
                 Province p = null;
-                if (provinces.TryGetValue(id, out p))
+                if (provinces.TryGetValue(id.Key.IntValue(), out p))
                 {
 
                     //region.Provinces.Add(p);
@@ -99,6 +114,8 @@ public class MapLoader : MonoBehaviour {
                 }
             }
             regions.Add(region);
+            lock (ProgressBar)
+                ProgressBar.Progress++;
         }
         return regions;
     }
@@ -106,8 +123,14 @@ public class MapLoader : MonoBehaviour {
     List<SupplyArea> LoadAreas(string basePath, Dictionary<int, State> states)
     {
 
+        Debug.Log("Loading areas");
         List<SupplyArea> areas = new List<SupplyArea>();
         var files = Directory.GetFiles(basePath + "/map/supplyareas");
+        lock (ProgressBar)
+        {
+            ProgressBar.MaxProgress = files.Length;
+            ProgressBar.Progress = 0;
+        }
         foreach (var file in files)
         {
             SupplyArea area = new SupplyArea();
@@ -115,17 +138,19 @@ public class MapLoader : MonoBehaviour {
             area.ID = table.Get<ScriptValue>("id").IntValue();
             area.SupplyValue = table.Get<ScriptValue>("value").IntValue();
             area.Name = table.Get<ScriptValue>("name").StringValue();
-            var state = table.Get<ScriptList>("states").List;
+            var state = table.Get<ScriptList>("states").AllData;
             foreach (var id in state)
             {
                 State s = null;
-                if (states.TryGetValue(id, out s))
+                if (states.TryGetValue(id.Key.IntValue(), out s))
                 {
                     //area.States.Add(s);
                     s.Supply = area;
                 }
             }
             areas.Add(area);
+            lock (ProgressBar)
+                ProgressBar.Progress++;
         }
 
         return areas;
@@ -135,16 +160,14 @@ public class MapLoader : MonoBehaviour {
         try
         {
             Debug.Log("Loading");
-            var provincesFile = File.ReadAllLines(directory + "map/definition.csv");
-            var provincesMap = new Bitmap(directory + "map/provinces.bmp");
-            var specialAdjanciesFile = File.ReadAllLines(directory + "map/adjacencies.csv");
+            var provincesFile = File.ReadAllLines(directory + "/map/definition.csv");
+            var provincesMap = new Bitmap(directory + "/map/provinces.bmp");
+            var specialAdjanciesFile = File.ReadAllLines(directory + "/map/adjacencies.csv");
             lock(Map)
             {
                 Map.Height = provincesMap.Height;
                 Map.Width = provincesMap.Width;
             }
-            lock (ProgressBar)
-                ProgressBar.MaxProgress = provincesMap.Width;
 
             List<Province> provinces = new List<Province>();
             Dictionary<int, Province> provincesByID = new Dictionary<int, Province>();
@@ -193,7 +216,9 @@ public class MapLoader : MonoBehaviour {
             var areas = LoadAreas(directory, statesByID);
             //DebugMap = ReadBMPToTexture(directory + "/provinces.bmp");
             Debug.Log("Loaded provinces, now loading map");
-        
+
+            lock (ProgressBar)
+                ProgressBar.MaxProgress = provincesMap.Width;
             var tiles = new Tile[provincesMap.Width, provincesMap.Height];
             Debug.Log(provincesMap.Width);
             Debug.Log(provincesMap.Height);

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class SupplyArea
 {
-    public List<State> States;
+    public List<State> States = new List<State>();
     public int ID;
     public int SupplyValue;
     public string Name;

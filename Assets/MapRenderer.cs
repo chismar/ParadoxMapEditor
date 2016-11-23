@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Text;
 
 public class MapRenderer : MonoBehaviour
 {
@@ -153,7 +154,7 @@ public class MapRenderer : MonoBehaviour
         Color32 color = Color.clear;
         if (tile.BorderCount > 0)
         {
-            if(tile.Province.StrategicRegion != null && tile.Province.StrategicRegion != null)
+            if(tile.Province.StrategicRegion != null && tile.Province.State != null && tile.Province.State.Supply != null)
             {
 
                 tile.Province.StrategicRegion.TextureColor(ref color);
@@ -179,8 +180,11 @@ public class MapRenderer : MonoBehaviour
         return chunks[chunkX, chunkY];
     }
 
+    StringBuilder builder = new StringBuilder();
     public void LitUpProvince(Province province)
     {
+        builder.Length = 0;
+        builder.Append("Province = ").Append(province.ID).Append(" ");
         if(province != null)
         {
             Color32 color = Color.clear;
@@ -189,12 +193,15 @@ public class MapRenderer : MonoBehaviour
             if(province.State != null)
             {
 
+                builder.Append("State = ").Append(province.State.ID).Append(" ");
                 province.State.TextureColor(ref color);
                 mapMaterial.SetColor(materialStateProp, color);
                 mapMaterial.SetFloat(stateOverlayProp, 1f);
                 if (province.State.Supply != null && province.StrategicRegion != null)
                 {
 
+                    builder.Append("Supply Area = ").Append(province.State.Supply.ID).Append(" ");
+                    builder.Append("Strategic Region = ").Append(province.StrategicRegion.ID).Append(" ");
                     province.State.Supply.TextureColor(ref color);
                     mapMaterial.SetColor(materialSupplyProp, color);
                     province.StrategicRegion.TextureColor(ref color);
@@ -205,13 +212,13 @@ public class MapRenderer : MonoBehaviour
                     color = Color.white;
                     mapMaterial.SetColor(materialSupplyProp, color);
                     mapMaterial.SetColor(materialRegionProp, color);
-                    mapMaterial.SetFloat(stateOverlayProp, 0f);
                 }
             }
             else
             {
                 color = Color.clear;
                 mapMaterial.SetColor(materialStateProp, color);
+                mapMaterial.SetFloat(stateOverlayProp, 0f);
             }
             
             
@@ -228,6 +235,7 @@ public class MapRenderer : MonoBehaviour
             mapMaterial.SetColor(materialRegionProp, color);
             mapMaterial.SetFloat(stateOverlayProp, 0f);
         }
+        Debug.Log(builder.ToString());
     }
 
 }

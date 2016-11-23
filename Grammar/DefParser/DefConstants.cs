@@ -31,6 +31,7 @@ namespace InternalDSL {
         LIST = 2004,
         OP = 2005,
         ATOM = 2006,
-        DECIMAL = 2007
+        DECIMAL = 2007,
+        DATE = 2008
     }
 }

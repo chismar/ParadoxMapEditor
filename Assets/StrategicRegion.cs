@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class StrategicRegion
 {
-    public List<Province> Provinces;
+    public List<Province> Provinces = new List<Province>();
     public int ID;
     public string Name;
     public void Format(StringBuilder builder)

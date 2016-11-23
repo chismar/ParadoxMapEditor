@@ -24,14 +24,15 @@ DOT = "."
 
 %productions%
 
-Root = Operator+;
-Operator = IDENTIFIER Op Context;
-Context = OPEN_TABLE List CLOSE_TABLE | Atom;
-List = (IDENTIFIER (Op Context)? | Atom )+;
+Root = List;
+Operator = (Atom | IDENTIFIER) Op Context;
+Context = OPEN_TABLE List? CLOSE_TABLE | Atom | IDENTIFIER;
+List = ((Atom | IDENTIFIER) (Op Context)? )+;
 
 Op = EQUALS | MORE | LESS;
 
-Atom = Decimal | TRUE | FALSE | STRING;
+Atom = Date | Decimal | TRUE | FALSE | STRING;
 
 Decimal = NEGATIVE? NUMBER (DOT (NUMBEREND | NUMBER))?;
+Date = NUMBER DOT NUMBER DOT NUMBER;
 

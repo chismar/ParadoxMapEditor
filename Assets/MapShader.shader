@@ -67,26 +67,26 @@
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
 				fixed4 baseCol = col;
-				float litValue = (_SinTime.a + 1)/2;
 				if(col.a > 0.5)
 				{
 					//it's an internal filling color, half of it is region color and half is state
 					float2 eq = (baseCol.rg == _SelectedProvinceColor.rg);
 					fixed res = eq.x * eq.y;
-					col = lerp(col, _LitUpProvinceColor, (1 -_StateOverlay ) * litValue * res);
+					col = lerp(col, _LitUpProvinceColor, res);
 					eq = (baseCol.ba == _SelectedStateColor.ba);
-					res = eq.x * eq.y;
-					col = lerp(col, _LitUpStateColor, _StateOverlay * (1-res)* litValue * res);
+					float resS = eq.x * eq.y;
+					col = lerp(col, _LitUpStateColor, _StateOverlay * resS * (1-res));
 				}
 				else
 				{
 					//it's a border color, half of it is a pointer to strategic region and half to supply region
+					float litValue = (_SinTime.a + 1)/2;
 					float2 eq = (baseCol.rg == _SelectedRegionColor.rg);
 					fixed res = eq.x * eq.y;
 					col = lerp(_BorderColor, _LitUpRegionColor, litValue * res);
 					eq = (baseCol.ba == _SelectedSupplyColor.ba);
 					res = eq.x * eq.y;
-					col = lerp(_BorderColor, _LitUpSupplyColor, res * (1-litValue) * res);
+					col = lerp(col, _LitUpSupplyColor, (1-litValue) * res);
 				}
 				col.a = 1;
 				return col;

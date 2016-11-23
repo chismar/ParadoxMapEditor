@@ -34,6 +34,6 @@ public class State
     {
 
         color.b = (byte)(ID & 255);
-        color.a = (byte)(130 + ((ID >> 8) & 255));
+        color.a = (byte)(150 + ((ID >> 8) & 255));
     }
 }
