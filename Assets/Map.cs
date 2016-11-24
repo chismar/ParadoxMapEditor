@@ -25,9 +25,10 @@ public class Map : ScriptableObject
         tile.Province = province;
         if(prevOwner != null && prevOwner.Tiles.Count == 0)
         {
-            emptyProvinces.Push(prevOwner);
             Provinces.Remove(prevOwner);
             ProvincesByID.Remove(prevOwner.ID);
+            prevOwner.State = null;
+            prevOwner.StrategicRegion = null;
             ColorCodedProvinces.Remove(prevOwner.MapUniqueColor);
         }
         //change borders
@@ -80,27 +81,25 @@ public class Map : ScriptableObject
         
     }
 
-    Stack<Province> emptyProvinces = new Stack<Province>();
-    public Province CreateNewProvince(ProvinceType type, bool someBool, string otherType, int continent)
+    public Province CreateNewProvince(ProvinceType type, bool someBool, string otherType, int continent, Province fromProvince = null)
     {
-        Province p = null;
-        if (emptyProvinces.Count > 0)
-            p = emptyProvinces.Pop();
-        else
-        {
-            p = new Province();
-            p.Type = type;
-            p.SomeBool = someBool;
-            p.OtherType = otherType;
-            p.Continent = continent;
-            p.ID = NextID++;
-            p.MapUniqueColor = p.SerializedColor();
-            Provinces.Add(p);
-            ProvincesByID.Add(p.ID, p);
-            ColorCodedProvinces.Add(p.MapUniqueColor, p);
-        }
+        Province p = new Province();
 
+        p.ID = NextID++;
+        p.MapUniqueColor = p.SerializedColor();
+
+        Provinces.Add(p);
+        ProvincesByID.Add(p.ID, p);
+        ColorCodedProvinces.Add(p.MapUniqueColor, p);
+        p.Type = type;
+        p.SomeBool = someBool;
+        p.OtherType = otherType;
+        p.Continent = continent;
+        if (fromProvince != null)
+        {
+            p.State = fromProvince.State;
+            p.StrategicRegion = fromProvince.StrategicRegion;
+        }
         return p;
     }
-    
 }

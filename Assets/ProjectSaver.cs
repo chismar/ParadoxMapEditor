@@ -22,6 +22,12 @@ public class ProjectSaver : MonoBehaviour
 
         //Magick starts here
         Bitmap pixels = new Bitmap(Map.Width, Map.Height);
+        int pId = 1;
+        foreach (var province in Map.Provinces)
+        {
+            province.ID = pId++;
+            province.MapUniqueColor = province.SerializedColor();
+        }
         for ( int i = 0; i < Map.Tiles.GetLength(0);i++)
             for ( int j = 0; j < Map.Tiles.GetLength(1); j++)
             {
@@ -29,31 +35,37 @@ public class ProjectSaver : MonoBehaviour
                 pixels.SetPixel(tile.X, Map.Height - 1 - tile.Y, tile.Province.MapUniqueColor);
             }
         var dir = PlayerPrefs.GetString("directory");
-        pixels.Save(dir + "/provinces.png", ImageFormat.Png);
+        pixels.Save(dir + "/map/provinces.png", ImageFormat.Png);
         var path = Application.dataPath + "/StreamingAssets/";
         Process process = new Process();
         process.StartInfo.FileName = path + "PngToBmpEncoder.exe";
-        process.StartInfo.Arguments = String.Format("{0} {1} {2}", "\"" + dir + "\"", "provinces.png", "provinces.bmp");
+        process.StartInfo.Arguments = String.Format("{0} {1} {2}", "\"" + dir + "\"", "map/provinces.png", "map/provinces.bmp");
         UnityEngine.Debug.Log(process.StartInfo.Arguments);
         process.StartInfo.CreateNoWindow = true;
         process.StartInfo.UseShellExecute = false;
         process.Start();
-        process.Exited += (o,e) => File.Delete(dir + "/provinces.png");
+        process.Exited += (o,e) => File.Delete(dir + "/map/provinces.png");
         //Ends here
 
 
 
-        var defStream = File.Create(dir + "/definition.csv");
-        var adjStream = File.Create(dir + "/adjacencies.csv");
+        var defStream = File.Create(dir + "/map/definition.csv");
+        var adjStream = File.Create(dir + "/map/adjacencies.csv");
         
         var encoder = new UTF8Encoding();
         StringBuilder builder = new StringBuilder();
+        var firstLineBytes = encoder.GetBytes("0;0;0;0;land;true;unknown;2" + Environment.NewLine);
+        defStream.Write(firstLineBytes, 0, firstLineBytes.Length);
+        int idOffset = 0;
         foreach(var province in Map.Provinces)
         {
             if (province.Tiles.Count == 0)
+            {
+                idOffset--;
                 continue;
+            }
             builder.Length = 0;
-            builder.Append(province.ID).Append(';');
+            builder.Append(province.ID + idOffset).Append(';');
             builder.Append(province.MapUniqueColor.R).Append(';');
             builder.Append(province.MapUniqueColor.G).Append(';');
             builder.Append(province.MapUniqueColor.B).Append(';');
@@ -94,5 +106,53 @@ public class ProjectSaver : MonoBehaviour
         var lastLine = encoder.GetBytes("-1;-1;;-1;-1;-1;-1;-1;-1");
         adjStream.Write(lastLine, 0, lastLine.Length);
         adjStream.Close();
+
+        int stateId = 0;
+        foreach(var state in Map.States)
+        {
+            state.ID = stateId++;
+            state.Name = "\"STATE_" + state.ID + "\"";
+        }
+        var curDir = Directory.GetCurrentDirectory();
+        var states = new DirectoryInfo(dir + "/history/states");
+        states.Empty();
+        StringBuilder formatBuilder = new StringBuilder();
+        foreach ( var state in Map.States)
+        {
+            Directory.SetCurrentDirectory(dir + "/history/states");
+            formatBuilder.Length = 0;
+            state.Format(formatBuilder);
+            File.WriteAllText(state.ID.ToString() + "-State.txt", formatBuilder.ToString());
+        }
+        var regions = new DirectoryInfo(dir + "/map/strategicregions");
+        regions.Empty();
+        foreach ( var region in Map.StrategicRegions)
+        {
+            Directory.SetCurrentDirectory(dir + "/map/strategicregions");
+            formatBuilder.Length = 0;
+            region.Format(formatBuilder);
+            File.WriteAllText(region.ID.ToString() + "-Region.txt", formatBuilder.ToString());
+        }
+        var areas = new DirectoryInfo(dir + "/map/supplyareas");
+        areas.Empty();
+        foreach ( var area in Map.SupplyAreas)
+        {
+            Directory.SetCurrentDirectory(dir + "/map/supplyareas");
+            formatBuilder.Length = 0;
+            area.Format(formatBuilder);
+            File.WriteAllText(area.ID.ToString() + "-Area.txt", formatBuilder.ToString());
+        }
+        Directory.SetCurrentDirectory(curDir);
+    }
+
+    
+}
+
+public static class DirExt
+{
+    public static void Empty(this System.IO.DirectoryInfo directory)
+    {
+        foreach (System.IO.FileInfo file in directory.GetFiles()) file.Delete();
+        foreach (System.IO.DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
     }
 }

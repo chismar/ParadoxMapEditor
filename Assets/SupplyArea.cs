@@ -18,10 +18,11 @@ public class SupplyArea
         builder.Append("\t").AppendFormat("name={0}", Name).AppendLine();
         builder.Append("\t").AppendFormat("value={0}", SupplyValue).AppendLine();
         
-        builder.Append("\t").Append("provinces={").AppendLine();
+        builder.Append("\t").Append("states={").AppendLine();
         builder.Append('\t', 2);
         foreach (var state in States)
             builder.Append(state.ID).Append(" ");
+        builder.AppendLine();
         builder.Append("\t").Append("}").AppendLine();
         builder.Append("}");
     }

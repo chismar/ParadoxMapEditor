@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 public class Province {
 
     
@@ -13,10 +14,31 @@ public class Province {
     public HashSet<Tile> Tiles = new HashSet<Tile>();
     public Dictionary<Province, Adjacency> Adjacencies = new Dictionary<Province, Adjacency>();
     StrategicRegion region;
-    public StrategicRegion StrategicRegion { get { return region; } set { if (region == value) return; if (region != null) region.Provinces.Remove(this); region = value; region.Provinces.Add(this); } }
+    public StrategicRegion StrategicRegion { get { return region; } set { if (region == value) return; if (region != null) region.Provinces.Remove(this); region = value; if(region != null) region.Provinces.Add(this); } }
     State state;
-    public State State { get { return state; } set { if (state == value) return; if (state != null) state.Provinces.Remove(this); state = value; state.Provinces.Add(this); } }
-
+    public State State { get { return state; } set { if (state == value) return; if (state != null) state.Provinces.Remove(this); state = value; if (state != null)  state.Provinces.Add(this); } }
+    public Vector2 Anchor {  get
+        {
+            int maxX = int.MinValue;
+            int maxY = int.MinValue;
+            int minX = int.MaxValue;
+            int minY = int.MaxValue;
+            foreach (var tile in Tiles)
+            {
+                if (tile.X > maxX)
+                    maxX = tile.X;
+                if (tile.Y > maxY)
+                    maxY = tile.Y;
+                if (tile.X < minX)
+                    minX = tile.X;
+                if (tile.Y < minY)
+                    minY = tile.Y;
+            }
+            int midX = (maxX + minX) / 2;
+            int midY = (maxY + minY) / 2;
+            return new Vector2(midX, midY);
+        }
+    }
     public void AttachTile(Tile tile)
     {
         if(Tiles.Add(tile))

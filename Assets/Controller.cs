@@ -14,11 +14,11 @@ public class Controller : MonoBehaviour
         loader = FindObjectOfType<MapLoader>();
         loader.FinishedLoadingMap += () => { SelectMapMode(GetComponent<ProvinceSelectionMapMode>()); CurrentMapMode.Map = loader.Map; EnableAllMapModes(); };
     }
-
     private void Update()
     {
         if (Input.GetKeyUp(KeyCode.Escape))
             Application.Quit();
+        
     }
 
     private void EnableAllMapModes()

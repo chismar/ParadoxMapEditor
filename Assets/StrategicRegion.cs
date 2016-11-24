@@ -11,13 +11,14 @@ public class StrategicRegion
     public string Name;
     public void Format(StringBuilder builder)
     {
-        builder.Append("strategic_region=={");
+        builder.Append("strategic_region={");
         builder.Append("\t").AppendFormat("id={0}", ID).AppendLine();
         builder.Append("\t").AppendFormat("name={0}", Name).AppendLine();
         builder.Append("\t").Append("provinces={").AppendLine();
         builder.Append('\t', 2);
         foreach (var province in Provinces)
             builder.Append(province.ID).Append(" ");
+        builder.AppendLine();
         builder.Append("\t").Append("}").AppendLine();
         builder.Append("}");
     }

@@ -13,6 +13,7 @@ public class ProvinceSelectionMapMode : MapMode
     static MapModesAndControls controls;
     static Controller controller;
     UnityEngine.UI.Text provinceSelection;
+    UnityEngine.UI.InputField provinceSearch;
     UnityEngine.UI.Text brushSizeText;
     void OnEnable()
     {
@@ -24,7 +25,7 @@ public class ProvinceSelectionMapMode : MapMode
         controls.RegisterCallback(() => controller.SelectMapMode(this), "Province selection");
 
     }
-
+    int findProvince;
     void Update()
     {
         if (enabled)
@@ -49,7 +50,21 @@ public class ProvinceSelectionMapMode : MapMode
             float scale = brushSize / Border.sizeDelta.x;
             Border.localScale = new Vector3(scale, scale, 1) * Renderer.transform.localScale.x;
             Border.position = Input.mousePosition;
-
+            if(int.TryParse(provinceSearch.text, out findProvince))
+            {
+                if(selectedProvince == null || selectedProvince.ID != findProvince)
+                {
+                    Province p = null;
+                    Map.ProvincesByID.TryGetValue(findProvince, out p);
+                    if(p != null)
+                    {
+                        selectedProvince = p;
+                        Renderer.LitUpProvince(selectedProvince);
+                        provinceSelection.text = "Province selected: " + selectedProvince.ID;
+                        Camera.main.transform.position = new Vector3(selectedProvince.Anchor.x - Renderer.chunkSize/2, selectedProvince.Anchor.y - Renderer.chunkSize / 2, -10);
+                    }
+                }
+            }
         }
 
     }
@@ -61,6 +76,7 @@ public class ProvinceSelectionMapMode : MapMode
         selectedProvince = null;
         brushSizeText = dataPanel.PostString("Brush size: " + brushSize.ToString());
         provinceSelection = dataPanel.PostString("Province not selected yet");
+        provinceSearch = dataPanel.PostInput("FindProvince");
     }
 
     public override void Disable()
@@ -69,6 +85,7 @@ public class ProvinceSelectionMapMode : MapMode
         Border.gameObject.SetActive(false);
         Destroy(brushSizeText.gameObject);
         Destroy(provinceSelection.gameObject);
+        Destroy(provinceSearch.gameObject);
     }
     public override void OnLeft(int x, int y)
     {

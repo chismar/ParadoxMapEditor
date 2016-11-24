@@ -53,7 +53,7 @@ public class MapRenderer : MonoBehaviour
     Texture2D[,] chunks;
     List<GameObject> chunkGOs = new List<GameObject>();
     HashSet<Texture2D> forUpdate = new HashSet<Texture2D>();
-    int chunkSize = 512;
+    public int chunkSize = 512;
     IEnumerator CurrentCoroutine;
 
     IEnumerator CreateChunks()

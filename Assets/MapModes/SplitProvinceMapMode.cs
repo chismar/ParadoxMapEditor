@@ -70,20 +70,29 @@ public class SplitProvinceMapMode : MapMode
         public float Distance;
     }
     List<TileData> tilesData = new List<TileData>();
+
     public override void OnLeft(int x, int y)
     {
 
         Debug.Log("Splitting province");
         var selectedProv = Map.Tiles[x, y].Province;
-        int midX = 0;
-        int midY = 0;
+        int maxX = int.MinValue;
+        int maxY = int.MinValue;
+        int minX = int.MaxValue;
+        int minY = int.MaxValue;
         foreach (var tile in selectedProv.Tiles)
         {
-            midX += tile.X;
-            midY += tile.Y;
+            if (tile.X > maxX)
+                maxX = tile.X;
+            if (tile.Y > maxY)
+                maxY = tile.Y;
+            if (tile.X < minX)
+                minX = tile.X;
+            if (tile.Y < minY)
+                minY = tile.Y;
         }
-        midX /= selectedProv.Tiles.Count;
-        midY /= selectedProv.Tiles.Count;
+        int midX = (maxX + minX) / 2;
+        int midY = (maxY + minY) / 2;
         Vector2 startPoint = new Vector2(x, y);
         Vector2 pivot = new Vector2(midX, midY);
         float stepAngle = 360f / splitCount;
@@ -96,8 +105,16 @@ public class SplitProvinceMapMode : MapMode
             splitCenters.Add(otherPoint);
             Debug.Log(otherPoint);
         }
-
-        tilesData.Clear();
+        var lr = GetComponent<LineRenderer>();
+        lr.sortingOrder = 1;
+        lr.SetVertexCount(splitCenters.Count * 3);
+        for (int j = 0; j < splitCenters.Count; j++)
+        {
+            lr.SetPosition(j * 3, pivot - Vector2.one * Renderer.chunkSize/2);
+            lr.SetPosition(j * 3 + 1, splitCenters[j] - Vector2.one * Renderer.chunkSize / 2);
+            lr.SetPosition(j * 3 + 2, pivot - Vector2.one * Renderer.chunkSize / 2);
+        }
+            tilesData.Clear();
         foreach (var tile in selectedProv.Tiles)
             tilesData.Add(new TileData() { Tile = tile, SplitCenter = 0, Distance = float.MaxValue });
         for (int i = 0; i < tilesData.Count; i++)
@@ -106,7 +123,7 @@ public class SplitProvinceMapMode : MapMode
             for (int j = 0; j < splitCenters.Count; j++)
             {
                 var splitCenter = splitCenters[j];
-                float distance = (new Vector2(tileData.Tile.X, tileData.Tile.Y) - splitCenter).sqrMagnitude;
+                float distance = (new Vector2(tileData.Tile.X, tileData.Tile.Y) - splitCenter).magnitude;
                 if (distance < tileData.Distance)
                 {
                     tileData.Distance = distance;
@@ -118,7 +135,7 @@ public class SplitProvinceMapMode : MapMode
         }
         splitProvinces.Clear();
         for (int i = 0; i < splitCount; i++)
-            splitProvinces.Add(Map.CreateNewProvince(selectedProv.Type, selectedProv.SomeBool, selectedProv.OtherType, selectedProv.Continent));
+            splitProvinces.Add(Map.CreateNewProvince(selectedProv.Type, selectedProv.SomeBool, selectedProv.OtherType, selectedProv.Continent, selectedProv));
 
         for (int i = 0; i < tilesData.Count; i++)
         {

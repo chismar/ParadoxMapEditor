@@ -66,6 +66,7 @@ public class MapLoader : MonoBehaviour {
             //Debug.Log(table);
             state.ID = table.Get<ScriptValue>("id").IntValue();
             state.Name = table.Get<ScriptValue>("name").StringValue();
+            state.StateCategory = table.Get<ScriptValue>("state_category").StringValue();
             state.Manpower = table.Get<ScriptValue>("manpower").IntValue();
 
             var provincesList = table.Get<ScriptList>("provinces").AllData;
