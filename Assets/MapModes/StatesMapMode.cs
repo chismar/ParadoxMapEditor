@@ -59,6 +59,8 @@ public class StatesMapMode : MapMode
             selectedProvince.State.StateCategory = "rural";
             selectedProvince.State.ID = Map.States.Count;
             Map.States.Add(selectedProvince.State);
+            foreach (var tile in selectedProvince.Tiles)
+                Renderer.Update(tile);
         }
         stateSelection.text = "State selected: " + selectedProvince.State.ID;
         var targetProvince = Map.Tiles[x, y].Province;

@@ -61,9 +61,13 @@ public class SupplyAreasMapMode : MapMode
             selectedProvince.State.Supply.SupplyValue = 10;
             selectedProvince.State.Supply.ID = Map.SupplyAreas.Count;
             Map.SupplyAreas.Add(selectedProvince.State.Supply);
+            foreach (var tile in selectedProvince.Tiles)
+                Renderer.Update(tile);
         }
         regionSelection.text = "Supply area selected: " + selectedProvince.State.Supply.ID;
         var targetProvince = Map.Tiles[x, y].Province;
+        if (targetProvince.State == null)
+            return;
         if (targetProvince.State.Supply != selectedProvince.State.Supply)
         {
             targetProvince.State.Supply = selectedProvince.State.Supply;

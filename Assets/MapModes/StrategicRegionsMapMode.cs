@@ -58,6 +58,8 @@ public class StrategicRegionsMapMode : MapMode
             selectedProvince.StrategicRegion = new StrategicRegion();
             selectedProvince.StrategicRegion.ID = Map.StrategicRegions.Count;
             Map.StrategicRegions.Add(selectedProvince.StrategicRegion);
+            foreach (var tile in selectedProvince.Tiles)
+                Renderer.Update(tile);
         }
         regionSelection.text = "Region selected: " + selectedProvince.StrategicRegion.ID;
         var targetProvince = Map.Tiles[x, y].Province;

@@ -65,7 +65,8 @@ public class ProjectSaver : MonoBehaviour
                 continue;
             }
             builder.Length = 0;
-            builder.Append(province.ID + idOffset).Append(';');
+            province.ID += idOffset;
+            builder.Append(province.ID).Append(';');
             builder.Append(province.MapUniqueColor.R).Append(';');
             builder.Append(province.MapUniqueColor.G).Append(';');
             builder.Append(province.MapUniqueColor.B).Append(';');
@@ -112,6 +113,20 @@ public class ProjectSaver : MonoBehaviour
         {
             state.ID = stateId++;
             state.Name = "\"STATE_" + state.ID + "\"";
+        }
+
+        int regionID = 0;
+        foreach (var region in Map.StrategicRegions)
+        {
+            region.ID = regionID++;
+            region.Name = "\"REGION_" + region.ID + "\"";
+        }
+
+        int supplyID = 0;
+        foreach (var area in Map.SupplyAreas)
+        {
+            area.ID = supplyID++;
+            area.Name = "\"AREA_" + area.ID + "\"";
         }
         var curDir = Directory.GetCurrentDirectory();
         var states = new DirectoryInfo(dir + "/history/states");
