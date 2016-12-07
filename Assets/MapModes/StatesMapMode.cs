@@ -61,6 +61,7 @@ public class StatesMapMode : MapMode
             Map.States.Add(selectedProvince.State);
             foreach (var tile in selectedProvince.Tiles)
                 Renderer.Update(tile);
+            Renderer.LitUpProvince(selectedProvince);
         }
         stateSelection.text = "State selected: " + selectedProvince.State.ID;
         var targetProvince = Map.Tiles[x, y].Province;
@@ -68,6 +69,8 @@ public class StatesMapMode : MapMode
         {
             targetProvince.State = selectedProvince.State;
             foreach (var tile in targetProvince.Tiles)
+                Renderer.Update(tile);
+            foreach (var tile in selectedProvince.Tiles)
                 Renderer.Update(tile);
         }
     }

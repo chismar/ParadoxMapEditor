@@ -68,6 +68,8 @@ public class StrategicRegionsMapMode : MapMode
             targetProvince.StrategicRegion = selectedProvince.StrategicRegion;
             foreach (var tile in targetProvince.Tiles)
                 Renderer.Update(tile);
+            foreach (var tile in selectedProvince.Tiles)
+                Renderer.Update(tile);
         }
     }
 }

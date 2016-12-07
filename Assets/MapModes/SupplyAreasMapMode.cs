@@ -63,6 +63,8 @@ public class SupplyAreasMapMode : MapMode
             Map.SupplyAreas.Add(selectedProvince.State.Supply);
             foreach (var tile in selectedProvince.Tiles)
                 Renderer.Update(tile);
+
+            Renderer.LitUpProvince(selectedProvince);
         }
         regionSelection.text = "Supply area selected: " + selectedProvince.State.Supply.ID;
         var targetProvince = Map.Tiles[x, y].Province;
@@ -72,6 +74,8 @@ public class SupplyAreasMapMode : MapMode
         {
             targetProvince.State.Supply = selectedProvince.State.Supply;
             foreach (var tile in targetProvince.Tiles)
+                Renderer.Update(tile);
+            foreach (var tile in selectedProvince.Tiles)
                 Renderer.Update(tile);
         }
     }

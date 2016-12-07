@@ -9,7 +9,7 @@ using System;
 using System.Diagnostics;
 public class ProjectSaver : MonoBehaviour
 {
-
+    public MapRenderer Renderer;
     void Awake()
     {
         FindObjectOfType<MapLoader>().FinishedLoadingMap += () =>
@@ -33,6 +33,7 @@ public class ProjectSaver : MonoBehaviour
             {
                 var tile = Map.Tiles[i, j];
                 pixels.SetPixel(tile.X, Map.Height - 1 - tile.Y, tile.Province.MapUniqueColor);
+                Renderer.Update(tile);
             }
         var dir = PlayerPrefs.GetString("directory");
         pixels.Save(dir + "/map/provinces.png", ImageFormat.Png);
@@ -76,6 +77,7 @@ public class ProjectSaver : MonoBehaviour
             builder.Append(province.Continent).AppendLine();
             var lineBytes = encoder.GetBytes(builder.ToString());
             defStream.Write(lineBytes,0, lineBytes.Length);
+            
         }
         defStream.Close();
 
