@@ -12,8 +12,10 @@
 		_LitUpStateColor ("Lit State Color", Color) = (1,1,1,1)
 		_LitUpRegionColor ("Lit Region Color", Color) = (1,1,1,1)
 		_LitUpSupplyColor ("Lit Supply Color", Color) = (1,1,1,1)
+		_NoStateColor("No State Color", Color) = (1,1,1,1)
 		_BorderColor ("BorderColor", Color) = (1,1,1,1)
 		_StateOverlay ("StateOverlay", float) = 1
+		_InternalStateBordersColor("InternalStateBordersColor", Color) = (1,1,1,1)
 	}
 	SubShader
 	{
@@ -52,6 +54,8 @@
 			fixed4 _LitUpRegionColor;
 			fixed4 _LitUpSupplyColor;
 			fixed4 _BorderColor;
+			fixed4 _NoStateColor;
+			fixed4 _InternalStateBordersColor;
 			float _StateOverlay;
 			v2f vert (appdata v)
 			{
@@ -75,7 +79,10 @@
 					col = lerp(col, _LitUpProvinceColor, res);
 					eq = (baseCol.ba == _SelectedStateColor.ba);
 					float resS = eq.x * eq.y;
-					col = lerp(col, _LitUpStateColor, _StateOverlay * resS * (1-res));
+
+					col = lerp(col, _LitUpStateColor, _StateOverlay * resS * (1 - res));
+
+					
 				}
 				else
 				{
@@ -87,6 +94,7 @@
 					eq = (baseCol.ba == _SelectedSupplyColor.ba);
 					res = eq.x * eq.y;
 					col = lerp(col, _LitUpSupplyColor, (1-litValue) * res);
+					
 				}
 				col.a = 1;
 				return col;

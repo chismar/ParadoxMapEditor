@@ -13,7 +13,7 @@ public class SupplyArea
 
     public void Format(StringBuilder builder)
     {
-        builder.Append("state={");
+        builder.Append("state={").AppendLine();
         builder.Append("\t").AppendFormat("id={0}", ID).AppendLine();
         builder.Append("\t").AppendFormat("name={0}", Name).AppendLine();
         builder.Append("\t").AppendFormat("value={0}", SupplyValue).AppendLine();

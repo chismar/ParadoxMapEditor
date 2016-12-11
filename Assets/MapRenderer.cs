@@ -87,8 +87,10 @@ public class MapRenderer : MonoBehaviour
         chunksReady = true;
         Camera.main.transform.position = new Vector3(map.Width/2, map.Height/2, -10);
     }
-    IEnumerator RedrawCoroutine()
+
+    IEnumerator RedrawCoroutine(bool asStates)
     {
+
         ProgressBar.Text = "Creating chunks. Please wait...";
         ProgressBar.MaxProgress = chunks.GetLength(0)*chunks.GetLength(1);
         ProgressBar.Progress = 0;
@@ -122,12 +124,20 @@ public class MapRenderer : MonoBehaviour
         forUpdate.Clear();
         ready = true;
     }
-    void FullRedraw()
+    public void FullRedraw()
     {
         ready = false;
         if (CurrentCoroutine != null)
             StopCoroutine(CurrentCoroutine);
-        StartCoroutine(CurrentCoroutine = RedrawCoroutine());
+        StartCoroutine(CurrentCoroutine = RedrawCoroutine(false));
+    }
+
+    public void FullRedrawAsStates()
+    {
+        ready = false;
+        if (CurrentCoroutine != null)
+            StopCoroutine(CurrentCoroutine);
+        StartCoroutine(CurrentCoroutine = RedrawCoroutine(true));
     }
     public void Update(Tile tile)
     {

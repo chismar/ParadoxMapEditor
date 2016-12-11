@@ -116,6 +116,9 @@ Material:
         name: _StateOverlay
       second: 1
     - first:
+        name: _ToggleOnlyStates
+      second: 1
+    - first:
         name: _UVSec
       second: 0
     - first:
@@ -132,26 +135,32 @@ Material:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
+        name: _InternalStateBordersColor
+      second: {r: 0.6544118, g: 0.46674958, b: 0.46674958, a: 1}
+    - first:
         name: _LitUpProvinceColor
-      second: {r: 0.07586217, g: 1, b: 0, a: 1}
+      second: {r: 0.94117653, g: 1, b: 0.57254905, a: 1}
     - first:
         name: _LitUpRegionColor
-      second: {r: 1, g: 0.36764705, b: 0.36764705, a: 1}
+      second: {r: 0, g: 1, b: 0.13103461, a: 1}
     - first:
         name: _LitUpStateColor
-      second: {r: 0.9862069, g: 1, b: 0, a: 1}
+      second: {r: 0.072664365, g: 0.35294116, b: 0.13258559, a: 1}
     - first:
         name: _LitUpSupplyColor
-      second: {r: 0.40365094, g: 0.38235295, b: 1, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _NoStateColor
+      second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: _SelectedProvinceColor
-      second: {r: 0.58431375, g: 0.007843138, b: 0, a: 0}
+      second: {r: 0.1254902, g: 0.015686275, b: 0, a: 0}
     - first:
         name: _SelectedRegionColor
-      second: {r: 0.06666667, g: 0, b: 0.023529412, a: 0}
+      second: {r: 0.043137256, g: 0, b: 0.043137256, a: 0}
     - first:
         name: _SelectedStateColor
-      second: {r: 0.58431375, g: 0.007843138, b: 0.3019608, a: 0.5882353}
+      second: {r: 0.1254902, g: 0.015686275, b: 0.24313726, a: 0.5882353}
     - first:
         name: _SelectedSupplyColor
-      second: {r: 0.58431375, g: 0.007843138, b: 0.023529412, a: 0}
+      second: {r: 0.1254902, g: 0.015686275, b: 0.043137256, a: 0}

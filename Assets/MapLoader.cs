@@ -61,26 +61,34 @@ public class MapLoader : MonoBehaviour {
             
         foreach ( var file in files)
         {
-            State state = new State();
-            var table = ScriptsLoader.LoadScript(file);
-            //Debug.Log(table);
-            state.ID = table.Get<ScriptValue>("id").IntValue();
-            state.Name = table.Get<ScriptValue>("name").StringValue();
-            state.StateCategory = table.Get<ScriptValue>("state_category").StringValue();
-            state.Manpower = table.Get<ScriptValue>("manpower").IntValue();
-
-            var provincesList = table.Get<ScriptList>("provinces").AllData;
-            foreach ( var id in provincesList)
+            try
             {
-                Province p = null;
-                if (provinces.TryGetValue(id.Key.IntValue(), out p))
-                {
+                State state = new State();
+                var table = ScriptsLoader.LoadScript(file);
+                //Debug.Log(table);
+                state.ID = table.Get<ScriptValue>("id").IntValue();
+                state.Name = table.Get<ScriptValue>("name").StringValue();
+                state.StateCategory = table.Get<ScriptValue>("state_category").StringValue();
+                state.Manpower = table.Get<ScriptValue>("manpower").IntValue();
 
-                    //state.Provinces.Add(p);
-                    p.State = state;
+                var provincesList = table.Get<ScriptList>("provinces").AllData;
+                foreach (var id in provincesList)
+                {
+                    Province p = null;
+                    if (provinces.TryGetValue(id.Key.IntValue(), out p))
+                    {
+
+                        //state.Provinces.Add(p);
+                        p.State = state;
+                    }
                 }
+                states.Add(state);
             }
-            states.Add(state);
+            catch(System.Exception e)
+            {
+                Debug.LogFormat("Can't parse file {0}", file);
+                Debug.Log(e);
+            }
             lock (ProgressBar)
                 ProgressBar.Progress++;
         }
@@ -99,23 +107,31 @@ public class MapLoader : MonoBehaviour {
         }
         foreach ( var file in files)
         {
-            StrategicRegion region = new StrategicRegion();
-            var table = ScriptsLoader.LoadScript(file);
-            region.ID = table.Get<ScriptValue>("id").IntValue();
-            region.Name = table.Get<ScriptValue>("name").StringValue();
-            var provincesList = table.Get<ScriptList>("provinces").AllData;
-            foreach (var id in provincesList)
-            {
-                Province p = null;
-                if (provinces.TryGetValue(id.Key.IntValue(), out p))
+            try
+            { 
+                StrategicRegion region = new StrategicRegion();
+                var table = ScriptsLoader.LoadScript(file);
+                region.ID = table.Get<ScriptValue>("id").IntValue();
+                region.Name = table.Get<ScriptValue>("name").StringValue();
+                var provincesList = table.Get<ScriptList>("provinces").AllData;
+                foreach (var id in provincesList)
                 {
+                    Province p = null;
+                    if (provinces.TryGetValue(id.Key.IntValue(), out p))
+                    {
 
-                    //region.Provinces.Add(p);
-                    p.StrategicRegion = region;
+                        //region.Provinces.Add(p);
+                        p.StrategicRegion = region;
+                    }
                 }
+                regions.Add(region);
             }
-            regions.Add(region);
-            lock (ProgressBar)
+                catch (System.Exception e)
+            {
+                Debug.LogFormat("Can't parse file {0}", file);
+                Debug.Log(e);
+            }
+        lock (ProgressBar)
                 ProgressBar.Progress++;
         }
         return regions;
@@ -134,22 +150,31 @@ public class MapLoader : MonoBehaviour {
         }
         foreach (var file in files)
         {
-            SupplyArea area = new SupplyArea();
-            var table = ScriptsLoader.LoadScript(file);
-            area.ID = table.Get<ScriptValue>("id").IntValue();
-            area.SupplyValue = table.Get<ScriptValue>("value").IntValue();
-            area.Name = table.Get<ScriptValue>("name").StringValue();
-            var state = table.Get<ScriptList>("states").AllData;
-            foreach (var id in state)
+            try
             {
-                State s = null;
-                if (states.TryGetValue(id.Key.IntValue(), out s))
+
+                SupplyArea area = new SupplyArea();
+                var table = ScriptsLoader.LoadScript(file);
+                area.ID = table.Get<ScriptValue>("id").IntValue();
+                area.SupplyValue = table.Get<ScriptValue>("value").IntValue();
+                area.Name = table.Get<ScriptValue>("name").StringValue();
+                var state = table.Get<ScriptList>("states").AllData;
+                foreach (var id in state)
                 {
-                    //area.States.Add(s);
-                    s.Supply = area;
+                    State s = null;
+                    if (states.TryGetValue(id.Key.IntValue(), out s))
+                    {
+                        //area.States.Add(s);
+                        s.Supply = area;
+                    }
                 }
+                areas.Add(area);
             }
-            areas.Add(area);
+            catch (System.Exception e)
+            {
+                Debug.LogFormat("Can't parse file {0}", file);
+                Debug.Log(e);
+            }
             lock (ProgressBar)
                 ProgressBar.Progress++;
         }

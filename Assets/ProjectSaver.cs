@@ -33,7 +33,6 @@ public class ProjectSaver : MonoBehaviour
             {
                 var tile = Map.Tiles[i, j];
                 pixels.SetPixel(tile.X, Map.Height - 1 - tile.Y, tile.Province.MapUniqueColor);
-                Renderer.Update(tile);
             }
         var dir = PlayerPrefs.GetString("directory");
         pixels.Save(dir + "/map/provinces.png", ImageFormat.Png);
@@ -117,18 +116,18 @@ public class ProjectSaver : MonoBehaviour
             state.Name = "\"STATE_" + state.ID + "\"";
         }
 
-        int regionID = 0;
+        int regionID = 1;
         foreach (var region in Map.StrategicRegions)
         {
             region.ID = regionID++;
             region.Name = "\"REGION_" + region.ID + "\"";
         }
 
-        int supplyID = 0;
+        int supplyID = 1;
         foreach (var area in Map.SupplyAreas)
         {
             area.ID = supplyID++;
-            area.Name = "\"AREA_" + area.ID + "\"";
+            area.Name = "\"SUPPLYAREA_" + area.ID + "\"";
         }
         var curDir = Directory.GetCurrentDirectory();
         var states = new DirectoryInfo(dir + "/history/states");
@@ -157,9 +156,10 @@ public class ProjectSaver : MonoBehaviour
             Directory.SetCurrentDirectory(dir + "/map/supplyareas");
             formatBuilder.Length = 0;
             area.Format(formatBuilder);
-            File.WriteAllText(area.ID.ToString() + "-Area.txt", formatBuilder.ToString());
+            File.WriteAllText(area.ID.ToString() + "-SupplyArea.txt", formatBuilder.ToString());
         }
         Directory.SetCurrentDirectory(curDir);
+        Renderer.FullRedraw();
     }
 
     

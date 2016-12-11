@@ -3,12 +3,14 @@ using System.Collections;
 
 public class RendererController : MonoBehaviour {
 
-
+    public MapRenderer Renderer;
     Camera cam;
     public float Speed;
+    int statesToggle;
     void Awake()
     {
         cam = GetComponent<Camera>();
+        statesToggle = Shader.PropertyToID("_ToggleOnlyStates");
     }
 	void Update()
     {
@@ -30,12 +32,21 @@ public class RendererController : MonoBehaviour {
         }
         if (Input.GetKey(KeyCode.Q))
         {
-            cam.orthographicSize *= 0.9f;
+            cam.orthographicSize *= 0.95f;
         }
         if (Input.GetKey(KeyCode.E))
         {
 
-            cam.orthographicSize *= 1.2f;
+            cam.orthographicSize *= 1.05f;
+        }
+        if(Input.GetKeyUp(KeyCode.Alpha1))
+        {
+            //switch to states mapmode
+        }
+        else if (Input.GetKeyUp(KeyCode.Alpha2))
+        {
+            //switch to provinces mapmode
+
         }
     }
 }
