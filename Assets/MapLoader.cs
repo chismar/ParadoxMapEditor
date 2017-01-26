@@ -78,6 +78,7 @@ public class MapLoader : MonoBehaviour {
 					var ownerTag = hTable.Get<ScriptValue>("owner").StringValue();
 					var c = Map.World.Create(ownerTag);
 					state.Owner = c;
+
 				}
 				var provincesList = table.Get<ScriptList>("provinces").AllData;
                 foreach (var id in provincesList)
