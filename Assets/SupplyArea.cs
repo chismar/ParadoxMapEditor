@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class SupplyArea
 {
+
+	public GameObject IconGO;
     public List<State> States = new List<State>();
     public int ID;
     public int SupplyValue;

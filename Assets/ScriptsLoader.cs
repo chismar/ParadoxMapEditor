@@ -90,7 +90,37 @@ public class ScriptTable : ScriptOperator
         return uniqueData[name] as T;
     }
 
+	public string String(string name)
+	{
+		return (uniqueData[name] as ScriptValue).StringValue();
+	}
 
+	public bool Bool(string name)
+	{
+		return (uniqueData[name] as ScriptValue).BoolValue();
+	}
+	public int Value(string name)
+	{
+		return (uniqueData[name] as ScriptValue).IntValue();
+	}
+
+	public List<ScriptTable> AllThat(string id)
+	{
+		List<ScriptTable> tables = new List<ScriptTable> ();
+		foreach (var data in AllData) {
+			if (data.Value is ScriptTable) {
+				if(data.Key.StringValue() == id)
+				tables.Add (data.Value as ScriptTable);
+
+			}
+		}
+		return tables;
+	}
+
+	public ScriptList List(string name)
+	{
+		return (uniqueData [name] as ScriptList);
+	}
 }
 
 
@@ -177,6 +207,8 @@ public class ScriptList : ScriptTable
         builder.Append("}");
         return builder.ToString();
     }
+
+
 }
 
 public class ScriptValue : ScriptOperator

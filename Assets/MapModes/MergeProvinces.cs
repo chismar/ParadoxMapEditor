@@ -46,7 +46,8 @@ public class MergeProvinces : MapMode
     {
         if (selectedProvince == null)
             return;
-
+        if(selectedProvince.Tiles.Count == 0)
+            return;
         var province = Map.Tiles[x, y].Province;
         if (province == selectedProvince)
             return;

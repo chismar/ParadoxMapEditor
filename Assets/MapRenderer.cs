@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Text;
-
+using System.IO;
 public class MapRenderer : MonoBehaviour
 {
     public MapLoader MapLoader;
@@ -15,18 +15,48 @@ public class MapRenderer : MonoBehaviour
     int materialSupplyProp;
 
     int stateOverlayProp;
+
+	public enum RenderMode { Normal, ProvinceType, StateType, Owner }
+	Dictionary<string, Color32> typeColor = new Dictionary<string, Color32>();
     void Awake()
     {
-        MapLoader.FinishedLoadingMap += () => { map = MapLoader.Map; FullRedraw(); };
+		MapLoader.FinishedLoadingMap += () => { map = MapLoader.Map; LoadColors(); FullRedraw(); };
         materialProvinceProp = Shader.PropertyToID("_SelectedProvinceColor");
         materialStateProp = Shader.PropertyToID("_SelectedStateColor");
         materialRegionProp = Shader.PropertyToID("_SelectedRegionColor");
         materialSupplyProp = Shader.PropertyToID("_SelectedSupplyColor");
         stateOverlayProp = Shader.PropertyToID("_StateOverlay");
-    }
+	}
 
+	void LoadColors()
+	{
+
+		var pathToColors = MapLoader.ChosenProjectDir + "map/MAP_EDITOR_TYPE_COLORS.txt";
+		var lines = File.ReadAllLines (pathToColors);
+		foreach (var line in lines) {
+			var part = line.Split (' ');
+			Color32 c = new Color32 (byte.Parse (part [1]), byte.Parse (part [2]), byte.Parse (part [3]), 255);
+			typeColor.Add (part [0], c);
+		}
+	}
+	RenderMode mode = RenderMode.Normal;
+	public void ChangeMode(RenderMode mode)
+	{
+		this.mode = mode;
+		if (mode != RenderMode.Normal)
+			LitUpProvince (null);
+		FullRedraw ();
+	}
     void Update()
     {
+		if (Input.GetKeyUp (KeyCode.Alpha0))
+			ChangeMode (RenderMode.Normal);
+		if(Input.GetKeyUp(KeyCode.Alpha9))
+			ChangeMode(RenderMode.StateType);
+		if(Input.GetKeyUp(KeyCode.Alpha8))
+			ChangeMode(RenderMode.ProvinceType);
+		if(Input.GetKeyUp(KeyCode.Alpha7))
+			ChangeMode(RenderMode.Owner);
         if(map == null)
         {
             if (MapLoader.Map != null)
@@ -88,7 +118,7 @@ public class MapRenderer : MonoBehaviour
         Camera.main.transform.position = new Vector3(map.Width/2, map.Height/2, -10);
     }
 
-    IEnumerator RedrawCoroutine(bool asStates)
+    IEnumerator RedrawCoroutine()
     {
 
         ProgressBar.Text = "Creating chunks. Please wait...";
@@ -129,16 +159,9 @@ public class MapRenderer : MonoBehaviour
         ready = false;
         if (CurrentCoroutine != null)
             StopCoroutine(CurrentCoroutine);
-        StartCoroutine(CurrentCoroutine = RedrawCoroutine(false));
+        StartCoroutine(CurrentCoroutine = RedrawCoroutine());
     }
 
-    public void FullRedrawAsStates()
-    {
-        ready = false;
-        if (CurrentCoroutine != null)
-            StopCoroutine(CurrentCoroutine);
-        StartCoroutine(CurrentCoroutine = RedrawCoroutine(true));
-    }
     public void Update(Tile tile)
     {
         Update(tile.X, tile.Y);
@@ -163,23 +186,33 @@ public class MapRenderer : MonoBehaviour
     Color32 GetColorForTile(Tile tile)
     {
         Color32 color = Color.clear;
-        if (tile.BorderCount > 0)
-        {
-            if(tile.Province.StrategicRegion != null && tile.Province.State != null && tile.Province.State.Supply != null)
-            {
+		if (mode == RenderMode.Normal) {
+			if (tile.BorderCount > 0) {
+				if (tile.Province.StrategicRegion != null && tile.Province.State != null && tile.Province.State.Supply != null) {
 
-                tile.Province.StrategicRegion.TextureColor(ref color);
-                tile.Province.State.Supply.TextureColor(ref color);
-            }
-        }
-        else
-        {
-            tile.Province.TextureColor(ref color);
-            if (tile.Province.State != null)
-                tile.Province.State.TextureColor(ref color);
-            else
-                color.a = 255;
-        }
+					tile.Province.StrategicRegion.TextureColor (ref color);
+					tile.Province.State.Supply.TextureColor (ref color);
+				}
+			} else {
+				tile.Province.TextureColor (ref color);
+				if (tile.Province.State != null)
+					tile.Province.State.TextureColor (ref color);
+				else
+					color.a = 255;
+			}
+		} else {
+			if (tile.BorderCount == 0)
+				color = Color.black;
+			else {
+				if (mode == RenderMode.ProvinceType)
+					typeColor.TryGetValue (tile.Province.OtherType, out color);
+				else if (mode == RenderMode.Owner)
+				if (tile.Province.State != null && tile.Province.State.Owner != null)
+					typeColor.TryGetValue (tile.Province.State.Owner.Tag, out color);
+				else if (tile.Province.State != null)
+					typeColor.TryGetValue (tile.Province.State.StateCategory, out color);
+			}
+		}
         return color;
     }
     Texture2D GetChunk(int x, int y, out int chunkOffsetX, out int chunkOffsetY)
@@ -196,6 +229,8 @@ public class MapRenderer : MonoBehaviour
     {
         builder.Length = 0;
         builder.Append("Province = ").Append(province.ID).Append(" ");
+		if (mode != RenderMode.Normal)
+			return;
         if(province != null)
         {
             Color32 color = Color.clear;
