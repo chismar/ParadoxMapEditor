@@ -26,7 +26,7 @@ public class ProvinceValueDrawMapMode : MapMode
 		fields.Add (StateName);
 		fields.Add (RegionName);
 		fields.Add (SupplyAreaName);
-		fields.Add (StateOwner);
+		//fields.Add (StateOwner);
 	}
 
 	const string StateManpower = "State manpower";
@@ -39,7 +39,9 @@ public class ProvinceValueDrawMapMode : MapMode
 	const string StateOwner = "Owner";
     void Update()
     {
-        
+		if (Input.GetKeyUp (KeyCode.O)) {
+			//Create new owner from selected one
+		}
 
     }
 	List<string> fields = new List<string>();

@@ -166,6 +166,30 @@ public class MapRenderer : MonoBehaviour
     {
         Update(tile.X, tile.Y);
     }
+
+	public void Update(State state)
+	{
+		for (int i = 0; i < state.Provinces.Count; i++)
+			Update (state.Provinces [i]);
+	}
+	public void Update(Province province)
+	{
+		foreach(var tile in province.Tiles)
+		{
+			Update (tile);
+			if(tile.BorderCount > 0)
+			{
+				if (tile.X > 0)
+					Update(tile.X - 1, tile.Y);
+				if (tile.X < map.Width - 1)
+					Update(tile.X + 1, tile.Y);
+				if (tile.Y > 0)
+					Update(tile.X, tile.Y - 1);
+				if (tile.Y < map.Height - 1)
+					Update(tile.X, tile.Y + 1);
+			}
+		}
+	}
     public void Update(int x, int y)
     {
         if (y == -1 && y == map.Height)

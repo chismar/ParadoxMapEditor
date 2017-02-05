@@ -23,6 +23,7 @@ public class MapLoader : MonoBehaviour {
     void Start()
     {
         Map = ScriptableObject.CreateInstance<Map>();
+		Map.World = ScriptableObject.CreateInstance<World> ();
         shouldContinue = true;
         finished = false;
         var dir = PlayerPrefs.GetString("directory");
@@ -75,9 +76,13 @@ public class MapLoader : MonoBehaviour {
 				var hTable = table.Get<ScriptTable>("history");
 				if(hTable != null)
 				{
-					var ownerTag = hTable.Get<ScriptValue>("owner").StringValue();
-					var c = Map.World.Create(ownerTag);
-					state.Owner = c;
+					var o = hTable.Get<ScriptValue>("owner");
+					if(o != null)
+					{
+						var ownerTag = o.StringValue();
+						var c = Map.World.Create(ownerTag);
+						state.Owner = c;
+					}
 
 				}
 				var provincesList = table.Get<ScriptList>("provinces").AllData;

@@ -2,17 +2,32 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 public class World : ScriptableObject
 {
 	public static int Year;	
 	public Map Map;
-	public List<string> CountriesTags { get { var list = new List<string>(); foreach (var tag in CountriesByTag)
+	List<string> cachedOwnersList = new List<string>();
+	public List<string> CountriesTags { get { var list = cachedOwnersList; list.Clear (); foreach (var tag in CountriesByTag)
 				list.Add (tag.Key); return list; } }
 	public Dictionary <string, Country> CountriesByTag = new Dictionary<string, Country>();
 	public Dictionary<string, Ideology> Ideologies = new Dictionary<string, Ideology>();
+	public SubIdeology LeaderIdeology(string name)
+	{
+		foreach (var ideology in Ideologies)
+			foreach (var sub in ideology.Value.Subs)
+				if (sub.ID == name)
+					return sub;
+		return null;
+	}
 	public void LoadFrom(string directory)
 	{
 		dir = directory;
+		var histFiles = Directory.GetFiles (CountriesHistoryDir ());
+		var colors = Directory.GetFiles (CountriesColorsDir ());
+		var tagsLines = File.ReadAllLines (CountryTags ());
+
+
 	}
 	string dir;
 	public void SaveTo(string directory)
@@ -39,6 +54,12 @@ public class World : ScriptableObject
 		Country c = new Country ();
 		c.Tag = tag;
 		CountriesByTag.Add (tag, c);
+		return c;
+	}
+
+	public Country Create(string tag, Country originalCountry)
+	{
+		var c = originalCountry.Clone (Create (tag));
 		return c;
 	}
 
@@ -93,7 +114,7 @@ public class Country
 		{
 			Leader l = new Leader ();
 			Leaders.Add (l);
-			l.LoadFrom (leaderT);
+			l.LoadFrom (leaderT, world);
 		}
 
 		foreach(var commanderT in historyTable.AllThat("create_corps_commander"))
@@ -156,8 +177,15 @@ public class Leader
 	public string Expire;
 	public SubIdeology Ideology;
 	public List<string> Traits;
-	public void LoadFrom(ScriptTable table)
+	public void LoadFrom(ScriptTable table, World world)
 	{
+		Name = table.String ("name");
+		Picture = table.String ("picture");
+		Expire = table.String ("expire");
+		Ideology = world.LeaderIdeology (table.String ("ideology"));
+		Traits = new List<string> ();
+		foreach (var traitId in table.List("traits").AllData)
+			Traits.Add (traitId.Key.StringValue());
 	}
 }
 
@@ -169,6 +197,13 @@ public class Commander
 	public int Skill;
 	public void LoadFrom(ScriptTable table)
 	{
+
+		Name = table.String ("name");
+		PortraitPath = table.String ("picture");
+		Skill = table.Value ("skill");
+		Traits = new List<string> ();
+		foreach (var traitId in table.List("traits").AllData)
+			Traits.Add (traitId.Key.StringValue());
 	}
 }
 
