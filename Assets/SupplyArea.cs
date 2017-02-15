@@ -13,7 +13,7 @@ public class SupplyArea
 
     public void Format(StringBuilder builder)
     {
-        builder.Append("state={").AppendLine();
+        builder.Append("supply_area={").AppendLine();
         builder.Append("\t").AppendFormat("id={0}", ID).AppendLine();
         builder.Append("\t").AppendFormat("name={0}", Name).AppendLine();
         builder.Append("\t").AppendFormat("value={0}", SupplyValue).AppendLine();
@@ -21,7 +21,8 @@ public class SupplyArea
         builder.Append("\t").Append("states={").AppendLine();
         builder.Append('\t', 2);
         foreach (var state in States)
-            builder.Append(state.ID).Append(" ");
+            if (state.Provinces.Count > 0)
+                builder.Append(state.ID).Append(" ");
         builder.AppendLine();
         builder.Append("\t").Append("}").AppendLine();
         builder.Append("}");

@@ -22,7 +22,26 @@ public class StrategicRegionsMapMode : MapMode
 
     }
 
+    private void Update()
+    {
+        if(Input.GetKeyUp(KeyCode.R))
+        {
+            var state = Map.States.Find(s => s.Provinces.Count >0 &&  s.Provinces.Find(p => p.StrategicRegion != null && p.StrategicRegion != s.Provinces[0].StrategicRegion) != null);
+            if(state != null)
+            {
+                selectedProvince = state.Provinces[0];
+                Renderer.LitUpProvince(selectedProvince);
+                provinceSelection.text = "Province selected: " + selectedProvince.ID;
+                if (selectedProvince.StrategicRegion != null)
+                    regionSelection.text = "Region selected: " + selectedProvince.StrategicRegion.ID;
+                else
+                    regionSelection.text = "Province has no Region";
+                Camera.main.transform.position = new Vector3(selectedProvince.Anchor.x - Renderer.chunkSize / 2, selectedProvince.Anchor.y - Renderer.chunkSize / 2, -10);
 
+            }
+
+        }
+    }
 
     public override void Enable()
     {

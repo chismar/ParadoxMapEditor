@@ -9,8 +9,11 @@ public class StatesMapMode : MapMode
     Province selectedProvince;
     static MapModesAndControls controls;
     static Controller controller;
+    UnityEngine.UI.Text makeNewNote;
     UnityEngine.UI.Text provinceSelection;
     UnityEngine.UI.Text stateSelection;
+
+    bool MakeNew = false;
     void OnEnable()
     {
         if (controls == null && controller == null)
@@ -22,6 +25,15 @@ public class StatesMapMode : MapMode
 
     }
 
+    void Update()
+    {
+        if(Input.GetKeyUp(KeyCode.N))
+        {
+            MakeNew = !MakeNew;
+
+            makeNewNote.text = ("Always make new on right click: " + MakeNew);
+        }
+    }
 
 
     public override void Enable()
@@ -29,6 +41,7 @@ public class StatesMapMode : MapMode
         base.Enable();
         selectedProvince = null;
         provinceSelection = dataPanel.PostString("Province not selected yet");
+        makeNewNote = dataPanel.PostString("Always make new on right click: " + MakeNew);
         stateSelection = dataPanel.PostString("State not selected yet");
     }
 
@@ -37,6 +50,7 @@ public class StatesMapMode : MapMode
         base.Disable();
         Destroy(provinceSelection.gameObject);
         Destroy(stateSelection.gameObject);
+        Destroy(makeNewNote.gameObject);
     }
     public override void OnLeft(int x, int y)
     {
@@ -53,7 +67,7 @@ public class StatesMapMode : MapMode
     {
         if (selectedProvince == null)
             return;
-        if(selectedProvince.State == null)
+        if(selectedProvince.State == null || MakeNew)
         {
             selectedProvince.State = new State();
             selectedProvince.State.StateCategory = "rural";

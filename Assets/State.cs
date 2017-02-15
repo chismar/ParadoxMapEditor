@@ -28,7 +28,8 @@ public class State
         builder.Append("\t").Append("provinces={").AppendLine();
         builder.Append('\t', 2);
         foreach (var province in Provinces)
-            builder.Append(province.ID).Append(" ");
+            if (province.Tiles.Count > 0)
+                builder.Append(province.ID).Append(" ");
         builder.AppendLine();
         builder.Append("\t").Append("}").AppendLine();
         builder.Append("}");

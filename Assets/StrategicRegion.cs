@@ -17,6 +17,7 @@ public class StrategicRegion
         builder.Append("\t").Append("provinces={").AppendLine();
         builder.Append('\t', 2);
         foreach (var province in Provinces)
+            if(province.Tiles.Count > 0)
             builder.Append(province.ID).Append(" ");
         builder.AppendLine();
         builder.Append("\t").Append("}").AppendLine();

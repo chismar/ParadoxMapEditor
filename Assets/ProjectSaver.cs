@@ -109,7 +109,7 @@ public class ProjectSaver : MonoBehaviour
         adjStream.Write(lastLine, 0, lastLine.Length);
         adjStream.Close();
 
-        int stateId = 0;
+        int stateId = 1;
         foreach(var state in Map.States)
         {
             state.ID = stateId++;
@@ -133,29 +133,51 @@ public class ProjectSaver : MonoBehaviour
         var states = new DirectoryInfo(dir + "/history/states");
         states.Empty();
         StringBuilder formatBuilder = new StringBuilder();
+        idOffset = 0;
         foreach ( var state in Map.States)
         {
             Directory.SetCurrentDirectory(dir + "/history/states");
+            if (state.Provinces.Count == 0)
+            {
+                idOffset--;
+                continue;
+            }
+            state.ID += idOffset;
             formatBuilder.Length = 0;
             state.Format(formatBuilder);
             File.WriteAllText(state.ID.ToString() + "-State.txt", formatBuilder.ToString());
         }
         var regions = new DirectoryInfo(dir + "/map/strategicregions");
         regions.Empty();
+        idOffset = 0;
         foreach ( var region in Map.StrategicRegions)
         {
             Directory.SetCurrentDirectory(dir + "/map/strategicregions");
+            if (region.Provinces.Count == 0)
+            {
+                idOffset--;
+                continue;
+            }
+            region.ID += idOffset;
             formatBuilder.Length = 0;
             region.Format(formatBuilder);
             File.WriteAllText(region.ID.ToString() + "-Region.txt", formatBuilder.ToString());
         }
         var areas = new DirectoryInfo(dir + "/map/supplyareas");
         areas.Empty();
+        idOffset = 0;
         foreach ( var area in Map.SupplyAreas)
         {
             Directory.SetCurrentDirectory(dir + "/map/supplyareas");
+            if(area.States.Count == 0)
+            {
+                idOffset--;
+                continue;
+            }
+            area.ID += idOffset;
             formatBuilder.Length = 0;
             area.Format(formatBuilder);
+            
             File.WriteAllText(area.ID.ToString() + "-SupplyArea.txt", formatBuilder.ToString());
         }
         Directory.SetCurrentDirectory(curDir);
