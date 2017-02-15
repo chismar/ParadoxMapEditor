@@ -31,7 +31,7 @@ public class MapRenderer : MonoBehaviour
 	void LoadColors()
 	{
 
-		var pathToColors = MapLoader.ChosenProjectDir + "map/MAP_EDITOR_TYPE_COLORS.txt";
+		var pathToColors = MapLoader.ChosenProjectDir + "/map/MAP_EDITOR_TYPE_COLORS.txt";
 		var lines = File.ReadAllLines (pathToColors);
 		foreach (var line in lines) {
 			var part = line.Split (' ');
@@ -251,12 +251,13 @@ public class MapRenderer : MonoBehaviour
     StringBuilder builder = new StringBuilder();
     public void LitUpProvince(Province province)
     {
+        if (mode != RenderMode.Normal)
+            return;
+
         builder.Length = 0;
-        builder.Append("Province = ").Append(province.ID).Append(" ");
-		if (mode != RenderMode.Normal)
-			return;
-        if(province != null)
+        if (province != null)
         {
+            builder.Append("Province = ").Append(province.ID).Append(" ");
             Color32 color = Color.clear;
             province.TextureColor(ref color);
             mapMaterial.SetColor(materialProvinceProp, color);

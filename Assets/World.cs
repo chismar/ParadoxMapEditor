@@ -51,6 +51,8 @@ public class World : ScriptableObject
 
 	public Country Create(string tag)
 	{
+        if (CountriesByTag.ContainsKey(tag))
+            return CountriesByTag[tag];
 		Country c = new Country ();
 		c.Tag = tag;
 		CountriesByTag.Add (tag, c);

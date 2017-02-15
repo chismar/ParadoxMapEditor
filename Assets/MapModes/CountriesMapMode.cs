@@ -49,12 +49,15 @@ public class CountriesMapMode : MapMode
 		var list = Map.World.CountriesTags;
 		selectedTag = dataPanel.PostString ("selected tag");
 		actionType = dataPanel.PostDropdown ("action type");
+        actionType.ClearOptions();
 		actionType.AddOptions (new List<string> (new string[]{"Add state to country", "Set capital"}));
 		reminderToUseO = dataPanel.PostString ("reminder");
 		reminderToUseO.text = "Press [O]wner to copy the selected country with a new tag";
 		copyNewTagValue = dataPanel.PostInput ("new tag");
-
+        copyNewTagValue.placeholder.GetComponent<Text>().text = "New TAG";
+       
 		allTags = dataPanel.PostDropdown ("all tags");
+        allTags.ClearOptions();
 		allTags.AddOptions (list);
 	}
 

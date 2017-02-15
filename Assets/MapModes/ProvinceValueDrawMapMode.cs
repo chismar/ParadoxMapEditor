@@ -51,6 +51,7 @@ public class ProvinceValueDrawMapMode : MapMode
 		fieldDropdown = dataPanel.PostDropdown ("State field");
 		fieldDropdown.onValueChanged.AddListener (DropdownValue);
 		fieldValue = dataPanel.PostInput ("Field value");
+        fieldValue.placeholder.GetComponent<Text>().text = "Custom value";
 		fieldValue.onValueChanged.AddListener (ValueChanged);
 		fieldDropdown.ClearOptions ();
 		valueDropdown = dataPanel.PostDropdown ("Value dropdown");
@@ -69,6 +70,7 @@ public class ProvinceValueDrawMapMode : MapMode
 
 	void DropdownValue(int value)
 	{
+        fieldValue.gameObject.SetActive(false);
 		if (value == 2)
 			valueDropdown.AddOptions (Map.provinceTypes);
 		else if (value == 3)
@@ -76,7 +78,9 @@ public class ProvinceValueDrawMapMode : MapMode
 		else if (value == 7)
 			valueDropdown.AddOptions (Map.World.CountriesTags);
 		else {
-			valueDropdown.gameObject.SetActive (false);
+
+            fieldValue.gameObject.SetActive(true);
+            valueDropdown.gameObject.SetActive (false);
 			return;
 		}
 

@@ -123,7 +123,7 @@ public class Map : ScriptableObject
 	void Awake()
 	{
 		go = new GameObject ("IconsUpdater");
-		go.AddComponent<Dummy> ().StartCoroutine(IconsUpdater());
+		//go.AddComponent<Dummy> ().StartCoroutine(IconsUpdater());
 
 	}
 
@@ -139,6 +139,8 @@ public class Map : ScriptableObject
 		while (true) {
 			if (States == null || States.Count == 0)
 				yield return null;
+            if (States == null)
+                continue;
 			if (index > States.Count)
 				index = 0;
 			var state = States [index];
@@ -146,8 +148,11 @@ public class Map : ScriptableObject
 			for (int i = 0; i < state.Provinces.Count; i++)
 				middle += state.Provinces [i].Anchor;
 			middle /= state.Provinces.Count;
-			state.IconGO.transform.position = middle;
-			index++;
+            if (state.IconGO != null)
+                state.IconGO.transform.position = middle;
+            else
+                state.IconGO = new GameObject("State " + state.ID);
+            index++;
 			yield return null;
 		}
 	}

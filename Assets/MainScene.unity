@@ -208,6 +208,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2746fe1403000549aa128d97d9a4c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DropdownPrefab: {fileID: 1328423646325054, guid: 4b452413ebf27824db02c00d44be8d8f,
+    type: 2}
   TextPrefab: {fileID: 1000012328144736, guid: f0688e36f6909364583a1e845c4905b9, type: 2}
   InputPrefab: {fileID: 1000010769968028, guid: 49cd3ce4ecf5b3f449ee68ad67ad1c10,
     type: 2}
@@ -279,6 +281,8 @@ GameObject:
   - component: {fileID: 431169196}
   - component: {fileID: 431169195}
   - component: {fileID: 431169198}
+  - component: {fileID: 431169199}
+  - component: {fileID: 431169200}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Untagged
@@ -524,6 +528,32 @@ LineRenderer:
     alignment: 0
     textureMode: 0
   m_UseWorldSpace: 1
+--- !u!114 &431169199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 431169187}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8772fa368f5216d4e81834ba31aec14c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Map: {fileID: 0}
+  Renderer: {fileID: 0}
+--- !u!114 &431169200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 431169187}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c985614e3cdca21428c3fd4dd433a679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Map: {fileID: 0}
+  Renderer: {fileID: 0}
 --- !u!1 &726452499
 GameObject:
   m_ObjectHideFlags: 0
@@ -903,7 +933,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 337, y: -25}
+  m_AnchoredPosition: {x: 469.5, y: -25}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &986429895
@@ -1616,7 +1646,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ProgressBar: {fileID: 1055769780}
   DebugMap: {fileID: 0}
-  ChosenProject: {fileID: 0}
+  ChosenProjectDir: 
   Map: {fileID: 0}
   ProgressMax: 0
   CurrentProgress: 0

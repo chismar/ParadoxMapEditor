@@ -87,22 +87,30 @@ public class ScriptTable : ScriptOperator
 
     public T Get<T>(string name) where T : ScriptOperator
     {
+        if(uniqueData.ContainsKey(name))
         return uniqueData[name] as T;
+        return null;
     }
 
 	public string String(string name)
-	{
-		return (uniqueData[name] as ScriptValue).StringValue();
-	}
+    {
+        if (uniqueData.ContainsKey(name))
+            return (uniqueData[name] as ScriptValue).StringValue();
+        return null;
+    }
 
 	public bool Bool(string name)
-	{
-		return (uniqueData[name] as ScriptValue).BoolValue();
-	}
+    {
+        if (uniqueData.ContainsKey(name))
+            return (uniqueData[name] as ScriptValue).BoolValue();
+        return false;
+    }
 	public int Value(string name)
-	{
-		return (uniqueData[name] as ScriptValue).IntValue();
-	}
+    {
+        if (uniqueData.ContainsKey(name))
+            return (uniqueData[name] as ScriptValue).IntValue();
+        return 0;
+    }
 
 	public List<ScriptTable> AllThat(string id)
 	{
@@ -118,8 +126,10 @@ public class ScriptTable : ScriptOperator
 	}
 
 	public ScriptList List(string name)
-	{
-		return (uniqueData [name] as ScriptList);
+    {
+        if (uniqueData.ContainsKey(name))
+            return (uniqueData [name] as ScriptList);
+        return null;
 	}
 }
 
