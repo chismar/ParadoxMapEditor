@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 public class MapModeDataPanel : MonoBehaviour {
 
+	public GameObject DropdownPrefab;
     public GameObject TextPrefab;
     public GameObject InputPrefab;
 	public Text PostString(string data)
@@ -21,4 +22,11 @@ public class MapModeDataPanel : MonoBehaviour {
         field.transform.SetParent(transform);
         return field;
     }
+
+	public Dropdown PostDropdown(string data)
+	{
+		var d = GameObject.Instantiate (DropdownPrefab).GetComponent<Dropdown> ();
+		d.transform.SetParent (transform);
+		return d;
+	}
 }

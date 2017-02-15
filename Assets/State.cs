@@ -6,11 +6,14 @@ using UnityEngine;
 
 public class State
 {
+	public GameObject IconGO;
     public List<Province> Provinces = new List<Province>();
     public int ID;
     public int Manpower;
     public string Name;
     public string StateCategory;
+	public string Category;
+	public Country Owner;
     SupplyArea area;
     public SupplyArea Supply {  get { return area; } set { if (area == value) return; if (area != null) area.States.Remove(this); area = value; area.States.Add(this); } }
     public void Format(StringBuilder builder)
@@ -24,7 +27,9 @@ public class State
         builder.Append("\t").Append("resources={").AppendLine();
         builder.Append("}").AppendLine();
         builder.Append("\t").Append("history={").AppendLine();
-        builder.Append("}").AppendLine();
+		if (Owner != null)
+			builder.Append ("\t").Append ("\t").Append ("owner=").Append (Owner);
+		builder.Append("}").AppendLine();
         builder.Append("\t").Append("provinces={").AppendLine();
         builder.Append('\t', 2);
         foreach (var province in Provinces)

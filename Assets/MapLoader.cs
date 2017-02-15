@@ -10,21 +10,24 @@ public class MapLoader : MonoBehaviour {
 
     public LoaderProgressUI ProgressBar;
     public Texture2D DebugMap;
-    public Project ChosenProject;
+    public string ChosenProjectDir;
     public Map Map;
     public event System.Action FinishedLoadingMap;
     public int ProgressMax;
     public int CurrentProgress;
-    public object ProgressLock = new object();
+	public object ProgressLock = new object ();
+
     bool finished = false;
     bool shouldContinue = true;
     Thread loadThread;
     void Start()
     {
         Map = ScriptableObject.CreateInstance<Map>();
+		Map.World = ScriptableObject.CreateInstance<World> ();
         shouldContinue = true;
         finished = false;
         var dir = PlayerPrefs.GetString("directory");
+		ChosenProjectDir = dir;
         loadThread = new Thread(() => LoadFrom(dir));
         loadThread.Start();
         StartCoroutine(ThreadWatchdog());
@@ -70,8 +73,19 @@ public class MapLoader : MonoBehaviour {
                 state.Name = table.Get<ScriptValue>("name").StringValue();
                 state.StateCategory = table.Get<ScriptValue>("state_category").StringValue();
                 state.Manpower = table.Get<ScriptValue>("manpower").IntValue();
+				var hTable = table.Get<ScriptTable>("history");
+				if(hTable != null)
+				{
+					var o = hTable.Get<ScriptValue>("owner");
+					if(o != null)
+					{
+						var ownerTag = o.StringValue();
+						var c = Map.World.Create(ownerTag);
+						state.Owner = c;
+					}
 
-                var provincesList = table.Get<ScriptList>("provinces").AllData;
+				}
+				var provincesList = table.Get<ScriptList>("provinces").AllData;
                 foreach (var id in provincesList)
                 {
                     Province p = null;
@@ -330,6 +344,13 @@ public class MapLoader : MonoBehaviour {
                 province.MapUniqueColor = province.SerializedColor();
                 provincesByColor.Add(province.MapUniqueColor, province);
             }
+
+			var provTypeLines = File.ReadAllLines(directory + "/map/MAP_EDITOR_PROVINCE_TYPES.txt");
+			foreach(var l in provTypeLines)
+				Map.provinceTypes.Add(l);
+			var stateTypeLines = File.ReadAllLines(directory + "/map/MAP_EDITOR_PROVINCE_TYPES.txt");
+			foreach(var l in stateTypeLines)
+				Map.stateTypes.Add(l);
             Debug.Log("Setting map data");
 
             Map.Provinces = provinces;

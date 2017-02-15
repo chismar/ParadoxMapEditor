@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class StrategicRegion
 {
+
+	public GameObject IconGO;
     public List<Province> Provinces = new List<Province>();
     public int ID;
     public string Name;
