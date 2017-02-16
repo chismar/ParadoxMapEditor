@@ -348,9 +348,11 @@ public class MapLoader : MonoBehaviour {
 			var provTypeLines = File.ReadAllLines(directory + "/map/MAP_EDITOR_PROVINCE_TYPES.txt");
 			foreach(var l in provTypeLines)
 				Map.provinceTypes.Add(l);
-			var stateTypeLines = File.ReadAllLines(directory + "/map/MAP_EDITOR_PROVINCE_TYPES.txt");
+			var stateTypeLines = File.ReadAllLines(directory + "/map/MAP_EDITOR_STATE_TYPES.txt");
 			foreach(var l in stateTypeLines)
 				Map.stateTypes.Add(l);
+
+            Map.World.LoadFrom(directory);
             Debug.Log("Setting map data");
 
             Map.Provinces = provinces;

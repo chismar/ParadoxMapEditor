@@ -11,6 +11,7 @@ public class ProvinceValueDrawMapMode : MapMode
 	Dropdown fieldDropdown;
 	Dropdown valueDropdown;
 	InputField fieldValue;
+    Text curValue;
 	void OnEnable()
     {
         if (controls == null && controller == null)
@@ -58,6 +59,7 @@ public class ProvinceValueDrawMapMode : MapMode
 		valueDropdown.ClearOptions ();
 		valueDropdown.gameObject.SetActive (false);
 		fieldDropdown.AddOptions (fields);
+        curValue = dataPanel.PostString("current value");
     }
 
 	int intValue = 0;
@@ -71,7 +73,9 @@ public class ProvinceValueDrawMapMode : MapMode
 	void DropdownValue(int value)
 	{
         fieldValue.gameObject.SetActive(false);
-		if (value == 2)
+        valueDropdown.ClearOptions();
+
+        if (value == 2)
 			valueDropdown.AddOptions (Map.provinceTypes);
 		else if (value == 3)
 			valueDropdown.AddOptions (Map.stateTypes);
@@ -92,11 +96,76 @@ public class ProvinceValueDrawMapMode : MapMode
 		Destroy (fieldDropdown);
 		Destroy (fieldValue);
 		Destroy (valueDropdown);
+        Destroy(curValue);
 	}
     public override void OnLeft(int x, int y)
     {
-		Renderer.LitUpProvince (Map.Tiles [x, y].Province);
 
+        curValue.text = "";
+        var option = fieldDropdown.value;
+        switch (option)
+        {
+            case 0:
+                //State manpower
+                var stateM = Map.Tiles[x, y].Province.State;
+                if (stateM == null)
+                    break;
+                curValue.text = stateM.Manpower.ToString();
+                break;
+            case 1:
+                //Supply area value
+                var stateA = Map.Tiles[x, y].Province.State;
+                if (stateA == null || stateA.Supply == null)
+                    break;
+                curValue.text = stateA.Supply.SupplyValue.ToString() ;
+                break;
+            case 2:
+                //Province category
+                var prov = Map.Tiles[x, y].Province;
+
+                curValue.text = prov.OtherType;
+                break;
+            case 3:
+                //State category
+
+                
+                var stateC = Map.Tiles[x, y].Province.State;
+                if (stateC == null)
+                    break;
+                curValue.text = stateC.StateCategory ;
+                break;
+            case 4:
+                //State name
+                
+                var stateN = Map.Tiles[x, y].Province.State;
+                if (stateN == null)
+                    break;
+                curValue.text = stateN.Name;
+                break;
+            case 5:
+                //Region name;
+                
+                var region = Map.Tiles[x, y].Province.StrategicRegion;
+                if (region == null)
+                    break;
+                curValue.text = region.Name;
+                break;
+            case 6:
+                //Area name
+
+                var stateAN = Map.Tiles[x, y].Province.State;
+                if (stateAN == null || stateAN.Supply == null)
+                    break;
+                curValue.text = stateAN.Supply.Name;
+                break;
+            case 7:
+                //Owner
+                var ownedState = Map.Tiles[x, y].Province.State;
+                if (ownedState == null)
+                    break;
+                curValue.text = ownedState.Owner.Tag;
+                break;
+        }
     }
     public override void OnRightClick(int x, int y)
     {
@@ -119,12 +188,14 @@ public class ProvinceValueDrawMapMode : MapMode
 			if (stateA == null || stateA.Supply == null)
 				break;
 			stateA.Supply.SupplyValue = intValue;
-			break;
+                break;
 		case 2:
 			//Province category
 			var prov = Map.Tiles [x, y].Province;
+            
 			prov.OtherType = Map.provinceTypes [valueDropdown.value];
-			break;
+                Renderer.Update(prov);
+                break;
 		case 3:
 			//State category
 
@@ -132,7 +203,8 @@ public class ProvinceValueDrawMapMode : MapMode
 			if (stateC == null)
 				break;
 			stateC.StateCategory = Map.stateTypes [valueDropdown.value];
-			break;
+                Renderer.Update(stateC);
+                break;
 		case 4:
 			//State name
 
@@ -163,8 +235,10 @@ public class ProvinceValueDrawMapMode : MapMode
 			if (ownedState == null)
 				break;
 			ownedState.Owner = Map.World.CountriesByTag [valueDropdown.itemText.text];
+                Renderer.Update(ownedState);
 			break;
 		}
+        OnLeft(x, y);
 
     }
 }

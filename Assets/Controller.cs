@@ -12,7 +12,12 @@ public class Controller : MonoBehaviour
     {
         
         loader = FindObjectOfType<MapLoader>();
-        loader.FinishedLoadingMap += () => { SelectMapMode(GetComponent<ProvinceSelectionMapMode>()); CurrentMapMode.Map = loader.Map; EnableAllMapModes(); };
+        loader.FinishedLoadingMap += OnMapLoad;
+    }
+    void OnMapLoad()
+    {
+        loader.FinishedLoadingMap -= OnMapLoad;
+        SelectMapMode(GetComponent<ProvinceSelectionMapMode>()); CurrentMapMode.Map = loader.Map; EnableAllMapModes();
     }
     private void Update()
     {

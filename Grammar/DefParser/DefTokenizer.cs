@@ -98,7 +98,7 @@ namespace InternalDSL {
             pattern = new TokenPattern((int) DefConstants.IDENTIFIER,
                                        "IDENTIFIER",
                                        TokenPattern.PatternType.REGEXP,
-                                       "([a-z]|[A-Z]|_)+");
+                                       "([a-z]|[A-Z])([a-z]|[A-Z]|_|[0-9])*");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) DefConstants.NUMBER,

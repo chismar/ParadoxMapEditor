@@ -38,8 +38,31 @@ public class MapRenderer : MonoBehaviour
 			Color32 c = new Color32 (byte.Parse (part [1]), byte.Parse (part [2]), byte.Parse (part [3]), 255);
 			typeColor.Add (part [0], c);
 		}
+        foreach(var country in map.World.CountriesByTag.Values)
+        {
+            typeColor.Add(country.Tag, country.CultureColor);
+        }
 	}
-	RenderMode mode = RenderMode.Normal;
+    Vector2 scrollPos = Vector2.zero;
+    private void OnGUI()
+    {
+        if (showHelp == false)
+            return;
+        if (mode == RenderMode.Normal)
+            return;
+        Rect rect = Rect.MinMaxRect(0, 0, 100, 400);
+        scrollPos = GUI.BeginScrollView(rect, scrollPos, Rect.MinMaxRect(0, 0, 100, typeColor.Count * 30));
+        
+        int index = 0;
+        foreach (var colorPair in typeColor)
+        {
+            GUI.color = colorPair.Value;
+            GUI.Label(Rect.MinMaxRect(0, index * 30, 100, index * 30 + 30), colorPair.Key);
+            index++;
+        }
+        GUI.EndGroup();
+    }
+    RenderMode mode = RenderMode.Normal;
 	public void ChangeMode(RenderMode mode)
 	{
 		this.mode = mode;
@@ -47,8 +70,11 @@ public class MapRenderer : MonoBehaviour
 			LitUpProvince (null);
 		FullRedraw ();
 	}
+    bool showHelp = false;
     void Update()
     {
+        if (Input.GetKeyUp(KeyCode.H))
+            showHelp = !showHelp;
 		if (Input.GetKeyUp (KeyCode.Alpha0))
 			ChangeMode (RenderMode.Normal);
 		if(Input.GetKeyUp(KeyCode.Alpha9))
@@ -225,16 +251,19 @@ public class MapRenderer : MonoBehaviour
 					color.a = 255;
 			}
 		} else {
-			if (tile.BorderCount == 0)
+			if (tile.BorderCount > 0)
 				color = Color.black;
 			else {
-				if (mode == RenderMode.ProvinceType)
-					typeColor.TryGetValue (tile.Province.OtherType, out color);
-				else if (mode == RenderMode.Owner)
-				if (tile.Province.State != null && tile.Province.State.Owner != null)
-					typeColor.TryGetValue (tile.Province.State.Owner.Tag, out color);
-				else if (tile.Province.State != null)
-					typeColor.TryGetValue (tile.Province.State.StateCategory, out color);
+                if (mode == RenderMode.ProvinceType)
+                    typeColor.TryGetValue(tile.Province.OtherType, out color);
+                else if (mode == RenderMode.Owner)
+                {
+
+                    if (tile.Province.State != null && tile.Province.State.Owner != null)
+                        typeColor.TryGetValue(tile.Province.State.Owner.Tag, out color);
+                }
+                else if (tile.Province.State != null)
+                    typeColor.TryGetValue(tile.Province.State.StateCategory, out color);
 			}
 		}
         return color;

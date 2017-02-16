@@ -20,7 +20,24 @@ class ScriptsLoader
         var table = ScriptOperator.LoadFromNode(idNode, opNode, ctxNode) as ScriptTable;
         return table;
     }
-
+    public static ScriptTable LoadScriptNoRoot(string path)
+    {
+        if (!File.Exists(path))
+            return null;
+        var text = File.ReadAllText(path);
+        var rootedText = String.Format("fictional_root={{\n {0} \n}}",text);
+        //UnityEngine.Debug.Log(rootedText);
+        TextReader reader = new StringReader(rootedText);
+        DefParser parser = new DefParser(reader);
+        var rootNode = parser.Parse();
+        reader.Close();
+        var list = rootNode.GetChildAt(0);
+        var idNode = list.GetChildAt(0);
+        var opNode = list.GetChildAt(1);
+        var ctxNode = list.GetChildAt(2);
+        var table = ScriptOperator.LoadFromNode(idNode, opNode, ctxNode) as ScriptTable;
+        return table;
+    }
     public static List<ScriptTable> LoadScripts(string path)
     {
         TextReader reader = new StreamReader(path);

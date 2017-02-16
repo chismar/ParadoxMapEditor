@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
+
 public class World : ScriptableObject
 {
 	public static int Year;	
@@ -24,9 +26,26 @@ public class World : ScriptableObject
 	{
 		dir = directory;
 		var histFiles = Directory.GetFiles (CountriesHistoryDir ());
-		var colors = Directory.GetFiles (CountriesColorsDir ());
 		var tagsLines = File.ReadAllLines (CountryTags ());
-
+        Dictionary<string, string> tagToGFXPath= new Dictionary<string, string>();
+        foreach (var tagLine in tagsLines)
+        {
+            var splitted = tagLine.Split('=');
+            var trimmedTag = splitted[0].Trim();
+            if (!Regex.IsMatch(trimmedTag, "[A-Z][A-Z][A-Z]"))
+                continue;
+            var trimmedFile = splitted[1].Trim(' ', '\"');
+            tagToGFXPath.Add(trimmedTag, trimmedFile);
+        }
+        foreach(var histFile in histFiles)
+        {
+            var name = Path.GetFileName(histFile);
+            var tag = name.Substring(0, 3);
+            var country = Create(tag);
+            var gfxPath = Common() + tagToGFXPath[tag];
+            //Debug.Log(gfxPath);
+            country.Load(this, histFile, gfxPath, null);
+        }
 
 	}
 	string dir;
@@ -37,9 +56,13 @@ public class World : ScriptableObject
 
 	public string CountriesColorsDir()
 	{
-		return dir + "/common/countries/colors";
-	}
-	public string CountryTags()
+		return dir + "/common/countries/";
+    }
+    public string Common()
+    {
+        return dir + "/common/";
+    }
+    public string CountryTags()
 	{
 		return dir + "/common/country_tags/00_countries.txt";
 	}
@@ -88,10 +111,9 @@ public class Country
 	List<Leader> Leaders = new List<Leader>();
 	public void Load(World world, string countryHist, string countryGFX, ScriptTable countryColor)
 	{
-		var historyTable = ScriptsLoader.LoadScript (countryHist);
-		var gfxTable = ScriptsLoader.LoadScript (countryGFX);
-	
-		Capital = world.Map.States.Find (s => s.ID == historyTable.Get<ScriptValue> ("capital").IntValue ());
+		//var historyTable = ScriptsLoader.LoadScript (countryHist);
+		var gfxTable = ScriptsLoader.LoadScriptNoRoot (countryGFX);
+        /*Capital = world.Map.States.Find (s => s.ID == historyTable.Get<ScriptValue> ("capital").IntValue ());
 		var techs = historyTable.Get<ScriptTable> ("set_technology");
 		foreach (var op in techs.AllData) {
 			Technologies.Add (new CountryTech (){ Name = op.Key.StringValue (), Value = (op.Value as ScriptValue).IntValue () });
@@ -128,13 +150,18 @@ public class Country
 
 		CultureGFX = gfxTable.String ("graphical_culture");
 		CultureGFX2D = gfxTable.String ("graphical_culture_2d");
-		CultureColor = gfxTable.Color ("color");
 
-		this.Color = countryColor.Color ("color");
-		this.ColorUI = countryColor.Color ("color_ui");
+        if(countryColor != null)
+        {
 
-
-	}
+            this.Color = countryColor.Color("color");
+            this.ColorUI = countryColor.Color("color_ui");
+        }*/
+        if (gfxTable != null)
+            CultureColor = gfxTable.Color("color");
+        else
+            CultureColor = new Color32(255, 255, 255, 255);
+    }
 
 	public void SaveHistory(string dir)
 	{
