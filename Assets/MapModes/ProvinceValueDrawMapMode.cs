@@ -203,6 +203,7 @@ public class ProvinceValueDrawMapMode : MapMode
 			if (stateC == null)
 				break;
 			stateC.StateCategory = Map.stateTypes [valueDropdown.value];
+
                 Renderer.Update(stateC);
                 break;
 		case 4:
