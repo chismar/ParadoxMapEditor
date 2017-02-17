@@ -28,7 +28,7 @@ public class State
         builder.Append("}").AppendLine();
         builder.Append("\t").Append("history={").AppendLine();
 		if (Owner != null)
-			builder.Append ("\t").Append ("\t").Append ("owner=").Append (Owner);
+			builder.Append ("\t").Append ("\t").Append ("owner=").Append (Owner.Tag);
 		builder.Append("}").AppendLine();
         builder.Append("\t").Append("provinces={").AppendLine();
         builder.Append('\t', 2);

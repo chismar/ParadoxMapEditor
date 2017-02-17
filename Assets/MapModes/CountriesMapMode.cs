@@ -64,11 +64,11 @@ public class CountriesMapMode : MapMode
 	public override void Disable()
 	{
 		base.Disable();
-		Destroy (selectedTag);
-		Destroy (actionType);
-		Destroy (copyNewTagValue);
-		Destroy (allTags);
-		Destroy (reminderToUseO);
+		Destroy (selectedTag.gameObject);
+		Destroy (actionType.gameObject);
+		Destroy (copyNewTagValue.gameObject);
+		Destroy (allTags.gameObject);
+		Destroy (reminderToUseO.gameObject);
 	}
 	public override void OnLeft(int x, int y)
 	{

@@ -41,6 +41,7 @@ public class MapRenderer : MonoBehaviour
         foreach(var country in map.World.CountriesByTag.Values)
         {
             typeColor.Add(country.Tag, country.CultureColor);
+            //Debug.Log(country.Tag + " " + country.CultureColor);
         }
 	}
     Vector2 scrollPos = Vector2.zero;

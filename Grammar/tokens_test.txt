@@ -2,13 +2,9 @@ Tokens from test.def:
 IDENTIFIER(1010): "graphical_culture", line: 1, col: 1
 EQUALS(1004): "=", line: 1, col: 19
 IDENTIFIER(1010): "western_european_gfx", line: 1, col: 21
-IDENTIFIER(1010): "graphical_culture_", line: 2, col: 1
-NUMBER(1011): "2", line: 2, col: 19
-IDENTIFIER(1010): "d", line: 2, col: 20
+IDENTIFIER(1010): "graphical_culture_2d", line: 2, col: 1
 EQUALS(1004): "=", line: 2, col: 22
-IDENTIFIER(1010): "western_european_", line: 2, col: 24
-NUMBER(1011): "2", line: 2, col: 41
-IDENTIFIER(1010): "d", line: 2, col: 42
+IDENTIFIER(1010): "western_european_2d", line: 2, col: 24
 IDENTIFIER(1010): "color", line: 4, col: 1
 EQUALS(1004): "=", line: 4, col: 7
 OPEN_TABLE(1002): "{", line: 4, col: 9

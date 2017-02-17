@@ -93,10 +93,10 @@ public class ProvinceValueDrawMapMode : MapMode
     public override void Disable()
     {
         base.Disable();
-		Destroy (fieldDropdown);
-		Destroy (fieldValue);
-		Destroy (valueDropdown);
-        Destroy(curValue);
+		Destroy (fieldDropdown.gameObject);
+		Destroy (fieldValue.gameObject);
+		Destroy (valueDropdown.gameObject);
+        Destroy(curValue.gameObject);
 	}
     public override void OnLeft(int x, int y)
     {

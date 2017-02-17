@@ -5,11 +5,19 @@ using System.Text;
 using InternalDSL;
 using System.IO;
 using PerCederberg.Grammatica.Runtime;
+using System.Text.RegularExpressions;
+
 class ScriptsLoader
 {
-    public static ScriptTable LoadScript(string path)
+    public static ScriptTable LoadScript(string path, bool debug = false)
     {
-        TextReader reader = new StreamReader(path);
+        if (!File.Exists(path))
+            return null;
+        var text = File.ReadAllText(path);
+        text = Regex.Replace(text, "#[^\n]*\n", "\n");
+        if (debug)
+            UnityEngine.Debug.Log(text);
+        TextReader reader = new StringReader(text);
         DefParser parser = new DefParser(reader);
         var rootNode = parser.Parse();
         reader.Close();
@@ -20,12 +28,14 @@ class ScriptsLoader
         var table = ScriptOperator.LoadFromNode(idNode, opNode, ctxNode) as ScriptTable;
         return table;
     }
+
     public static ScriptTable LoadScriptNoRoot(string path)
     {
         if (!File.Exists(path))
             return null;
         var text = File.ReadAllText(path);
         var rootedText = String.Format("fictional_root={{\n {0} \n}}",text);
+        rootedText = Regex.Replace(rootedText, "#[^\n]+", "\n");
         //UnityEngine.Debug.Log(rootedText);
         TextReader reader = new StringReader(rootedText);
         DefParser parser = new DefParser(reader);
@@ -129,6 +139,12 @@ public class ScriptTable : ScriptOperator
         return 0;
     }
 
+    public ScriptTable Table(string name)
+    {
+        if (uniqueData.ContainsKey(name))
+            return (uniqueData[name] as ScriptTable);
+        return null;
+    }
 	public List<ScriptTable> AllThat(string id)
 	{
 		List<ScriptTable> tables = new List<ScriptTable> ();

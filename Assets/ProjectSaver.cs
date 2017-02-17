@@ -181,6 +181,8 @@ public class ProjectSaver : MonoBehaviour
             File.WriteAllText(area.ID.ToString() + "-SupplyArea.txt", formatBuilder.ToString());
         }
         Directory.SetCurrentDirectory(curDir);
+
+        Map.World.SaveTo(dir);
         Renderer.FullRedraw();
     }
 

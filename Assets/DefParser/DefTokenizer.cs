@@ -110,7 +110,7 @@ namespace InternalDSL {
             pattern = new TokenPattern((int) DefConstants.NUMBEREND,
                                        "NUMBEREND",
                                        TokenPattern.PatternType.REGEXP,
-                                       "[0-9]*[1-9]");
+                                       "[0-9]+");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) DefConstants.STRING,

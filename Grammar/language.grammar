@@ -16,7 +16,7 @@ TRUE = "yes"
 FALSE = "no"
 IDENTIFIER = <<([a-z]|[A-Z])([a-z]|[A-Z]|_|[0-9])*>>
 NUMBER = <<0|[1-9]|[1-9][0-9]*>>
-NUMBEREND = <<[0-9]*[1-9]>>
+NUMBEREND = <<[0-9]+>>
 STRING = <<[\"]([^"\\]|\\.)*[\"]>>
 DOT = "."
 

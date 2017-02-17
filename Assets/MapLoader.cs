@@ -352,7 +352,6 @@ public class MapLoader : MonoBehaviour {
 			foreach(var l in stateTypeLines)
 				Map.stateTypes.Add(l);
 
-            Map.World.LoadFrom(directory);
             Debug.Log("Setting map data");
 
             Map.Provinces = provinces;
@@ -362,6 +361,7 @@ public class MapLoader : MonoBehaviour {
             Map.SupplyAreas = areas;
             Map.StrategicRegions = regions;
             Map.States = states;
+            Map.World.LoadFrom(directory);
             Debug.Log("Map data set");
             shouldContinue = false;
             finished = true;
