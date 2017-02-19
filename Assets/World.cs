@@ -265,13 +265,18 @@ public class Country
         {
             file.WriteLine(party.ToString());
         }
-        file.WriteLine("ruling_party = ", RulingParty.Ideology.ID);
-        file.WriteLine("elections_allowed = ", ElectionsAllowed ? "yes" : "no");
+        file.Write("\t\t");
+        file.WriteLine("ruling_party = " + RulingParty.Ideology.ID);
+        file.Write("\t\t");
+        file.WriteLine("elections_allowed = " + (ElectionsAllowed ? "yes" : "no"));
         file.WriteLine("}");
 
         file.WriteLine("add_ideas = {");
         foreach (var idea in Ideas)
+        {
+            file.Write("\t\t");
             file.WriteLine(idea);
+        }
         file.WriteLine("}");
 
         foreach(var leader in Leaders)

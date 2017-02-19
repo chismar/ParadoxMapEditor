@@ -154,13 +154,13 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: _SelectedProvinceColor
-      second: {r: 0.79607844, g: 0.011764706, b: 0, a: 0}
+      second: {r: 0.39215687, g: 0.007843138, b: 0, a: 0}
     - first:
         name: _SelectedRegionColor
-      second: {r: 0.16470589, g: 0, b: 0.09803922, a: 0}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _SelectedStateColor
-      second: {r: 0.79607844, g: 0.011764706, b: 0.078431375, a: 0.5921569}
+      second: {r: 0.39215687, g: 0.007843138, b: 0.09803922, a: 0.5921569}
     - first:
         name: _SelectedSupplyColor
-      second: {r: 0.79607844, g: 0.011764706, b: 0.09803922, a: 0}
+      second: {r: 1, g: 1, b: 1, a: 1}

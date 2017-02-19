@@ -122,7 +122,7 @@ public class ScriptTable : ScriptOperator
 	public string String(string name)
     {
         if (uniqueData.ContainsKey(name))
-            return (uniqueData[name] as ScriptValue).StringValue();
+            return (uniqueData[name] as ScriptValue).StringValue().Trim('\"');
         return null;
     }
 
