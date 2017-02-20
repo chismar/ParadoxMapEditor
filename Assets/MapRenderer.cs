@@ -74,17 +74,21 @@ public class MapRenderer : MonoBehaviour
     bool showHelp = false;
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.H))
-            showHelp = !showHelp;
-		if (Input.GetKeyUp (KeyCode.Alpha0))
-			ChangeMode (RenderMode.Normal);
-		if(Input.GetKeyUp(KeyCode.Alpha9))
-			ChangeMode(RenderMode.StateType);
-		if(Input.GetKeyUp(KeyCode.Alpha8))
-			ChangeMode(RenderMode.ProvinceType);
-		if(Input.GetKeyUp(KeyCode.Alpha7))
-			ChangeMode(RenderMode.Owner);
-        if(map == null)
+        if(Input.GetKey(KeyCode.LeftShift))
+        {
+
+            if (Input.GetKeyUp(KeyCode.H))
+                showHelp = !showHelp;
+            if (Input.GetKeyUp(KeyCode.Alpha0))
+                ChangeMode(RenderMode.Normal);
+            if (Input.GetKeyUp(KeyCode.Alpha9))
+                ChangeMode(RenderMode.StateType);
+            if (Input.GetKeyUp(KeyCode.Alpha8))
+                ChangeMode(RenderMode.ProvinceType);
+            if (Input.GetKeyUp(KeyCode.Alpha7))
+                ChangeMode(RenderMode.Owner);
+        }
+        if (map == null)
         {
             if (MapLoader.Map != null)
                 lock (MapLoader.Map)

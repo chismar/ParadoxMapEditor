@@ -39,14 +39,5 @@ public class RendererController : MonoBehaviour {
 
             cam.orthographicSize *= 1.05f;
         }
-        if(Input.GetKeyUp(KeyCode.Alpha1))
-        {
-            //switch to states mapmode
-        }
-        else if (Input.GetKeyUp(KeyCode.Alpha2))
-        {
-            //switch to provinces mapmode
-
-        }
     }
 }

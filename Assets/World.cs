@@ -88,7 +88,7 @@ public class World : ScriptableObject
             country.SaveHistory(hDir);
             //country.SaveColors(dir);
             country.SaveGFX(gfxDir);
-            file.WriteLine(String.Format("{0} = \"countries/{1}.txt\"", country.Tag, country.Name));
+            file.WriteLine(String.Format("{0} = \"countries/{0} - {1}.txt\"", country.Tag, country.Name));
         }
         file.Close();
 	}
@@ -162,8 +162,12 @@ public class Country
         //Debug.Log(historyTable);
         
 		var gfxTable =countryGFX != null? ScriptsLoader.LoadScriptNoRoot (countryGFX):null;
-        var capitalID = historyTable.Get<ScriptValue>("capital").IntValue();
-        Capital = world.Map.States.Find (s => s.ID == capitalID);
+        var cap = historyTable.Get<ScriptValue>("capital");
+        if(cap != null)
+        {
+            var capitalID = cap.IntValue();
+            Capital = world.Map.States.Find(s => s.ID == capitalID);
+        }
 		var techs = historyTable.Get<ScriptTable> ("set_technology");
 		foreach (var op in techs.AllData) {
 			Technologies.Add (new CountryTech (){ Name = op.Key.StringValue (), Value = (op.Value as ScriptValue).IntValue () });
@@ -173,7 +177,6 @@ public class Country
 		var parties = pol.Get<ScriptTable> ("parties");
 		var rulingParty = pol.String ("ruling_party");
 		ElectionsAllowed = pol.Bool ("elections_allowed");
-
         foreach (var partyT in parties.AllData) {
             Party party = new Party();
             var partyId = partyT.Key.StringValue();
@@ -260,11 +263,13 @@ public class Country
             file.WriteLine(tech.ToString());
         file.WriteLine("}");
 
-        file.WriteLine("set_polititcs = {");
-        foreach(var party in Parties)
+        file.WriteLine("set_politics = {");
+        file.WriteLine("parties = {");
+        foreach (var party in Parties)
         {
             file.WriteLine(party.ToString());
         }
+        file.WriteLine("}");
         file.Write("\t\t");
         file.WriteLine("ruling_party = " + RulingParty.Ideology.ID);
         file.Write("\t\t");
@@ -302,9 +307,11 @@ public class Country
 	public void SaveGFX(string dir)
     {
         var file = new StreamWriter(String.Format("{0}/{1} - {2}.txt", dir, Tag, Name));
-        file.WriteLine("graphical_culture  = " + CultureGFX);
-        file.WriteLine("graphical_culture_2d   = " + CultureGFX2D);
-        file.WriteLine(String.Format("color   = {{ {0} {1} {2} }}", CultureColor.r, CultureColor.g, CultureColor.b));
+        if(CultureGFX != null)
+        file.WriteLine("graphical_culture = " + CultureGFX);
+        if(CultureGFX2D != null)
+        file.WriteLine("graphical_culture_2d = " + CultureGFX2D);
+        file.WriteLine(String.Format("color = {{ {0} {1} {2} }}", CultureColor.r, CultureColor.g, CultureColor.b));
         file.Close();
     }
 
