@@ -40,7 +40,11 @@ public class CountriesMapMode : MapMode
 			if (selectedCountry == null)
 				return;
 			selectedCountry = Map.World.Create (tag, selectedCountry);
-		}
+            allTags.ClearOptions();
+            var list = Map.World.CountriesTags;
+            allTags.AddOptions(list);
+
+        }
 
 	}
 	public override void Enable()

@@ -27,8 +27,9 @@ public class ProvinceValueDrawMapMode : MapMode
 		fields.Add (StateName);
 		fields.Add (RegionName);
 		fields.Add (SupplyAreaName);
-		//fields.Add (StateOwner);
-	}
+        fields.Add(ProvinceType);
+        //fields.Add (StateOwner);
+    }
 
 	const string StateManpower = "State manpower";
 	const string AreaSupply = "Supply area value";
@@ -38,6 +39,7 @@ public class ProvinceValueDrawMapMode : MapMode
 	const string RegionName = "Strategic region name";
 	const string SupplyAreaName = "Supply name";
 	const string StateOwner = "Owner";
+    const string ProvinceType = "Province type";
     void Update()
     {
 		if (Input.GetKeyUp (KeyCode.O)) {
@@ -60,6 +62,7 @@ public class ProvinceValueDrawMapMode : MapMode
 		valueDropdown.gameObject.SetActive (false);
 		fieldDropdown.AddOptions (fields);
         curValue = dataPanel.PostString("current value");
+        DropdownValue(0);
     }
 
 	int intValue = 0;
@@ -74,19 +77,19 @@ public class ProvinceValueDrawMapMode : MapMode
 	{
         fieldValue.gameObject.SetActive(false);
         valueDropdown.ClearOptions();
-
         if (value == 2)
-			valueDropdown.AddOptions (Map.provinceTypes);
-		else if (value == 3)
-			valueDropdown.AddOptions (Map.stateTypes);
-		else if (value == 7)
-			valueDropdown.AddOptions (Map.World.CountriesTags);
-		else {
+            valueDropdown.AddOptions(Map.provinceTypes);
+        else if (value == 3)
+            valueDropdown.AddOptions(Map.stateTypes);
+        else if (value == 7)
+            valueDropdown.AddOptions(Map.provinceCategories);
+        else
+        {
 
             fieldValue.gameObject.SetActive(true);
-            valueDropdown.gameObject.SetActive (false);
-			return;
-		}
+            valueDropdown.gameObject.SetActive(false);
+            return;
+        }
 
 		valueDropdown.gameObject.SetActive (true);
 	}
@@ -123,7 +126,7 @@ public class ProvinceValueDrawMapMode : MapMode
                 //Province category
                 var prov = Map.Tiles[x, y].Province;
 
-                curValue.text = prov.OtherType;
+                curValue.text = prov.Type;
                 break;
             case 3:
                 //State category
@@ -159,11 +162,10 @@ public class ProvinceValueDrawMapMode : MapMode
                 curValue.text = stateAN.Supply.Name;
                 break;
             case 7:
-                //Owner
-                var ownedState = Map.Tiles[x, y].Province.State;
-                if (ownedState == null)
-                    break;
-                curValue.text = ownedState.Owner.Tag;
+                //Province category
+                var provC = Map.Tiles[x, y].Province;
+
+                curValue.text = provC.Category;
                 break;
         }
     }
@@ -193,7 +195,7 @@ public class ProvinceValueDrawMapMode : MapMode
 			//Province category
 			var prov = Map.Tiles [x, y].Province;
             
-			prov.OtherType = Map.provinceTypes [valueDropdown.value];
+			prov.Type = Map.provinceTypes [valueDropdown.value];
                 Renderer.Update(prov);
                 break;
 		case 3:
@@ -230,15 +232,14 @@ public class ProvinceValueDrawMapMode : MapMode
 				break;
 			Map.SetLoc (stateAN.Supply.Name, text);
 			break;
-		case 7:
-			//Owner
-			var ownedState = Map.Tiles [x, y].Province.State;
-			if (ownedState == null)
-				break;
-			ownedState.Owner = Map.World.CountriesByTag [valueDropdown.itemText.text];
-                Renderer.Update(ownedState);
-			break;
-		}
+        case 7:
+            //Province category
+            var provC = Map.Tiles[x, y].Province;
+
+            provC.Category = Map.provinceCategories[valueDropdown.value];
+            Renderer.Update(provC);
+            break;
+        }
         OnLeft(x, y);
 
     }

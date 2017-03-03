@@ -135,7 +135,7 @@ public class SplitProvinceMapMode : MapMode
         }
         splitProvinces.Clear();
         for (int i = 0; i < splitCount; i++)
-            splitProvinces.Add(Map.CreateNewProvince(selectedProv.Type, selectedProv.SomeBool, selectedProv.OtherType, selectedProv.Continent, selectedProv));
+            splitProvinces.Add(Map.CreateNewProvince(selectedProv.Category, selectedProv.SomeBool, selectedProv.Type, selectedProv.Continent, selectedProv));
 
         for (int i = 0; i < tilesData.Count; i++)
         {

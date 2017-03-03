@@ -226,9 +226,9 @@ public class MapLoader : MonoBehaviour {
                 var green = byte.Parse(stringData[2]);
                 var blue = byte.Parse(stringData[3]);
 
-                province.Type = stringData[4] == "land" ? ProvinceType.Land : stringData[4] == "sea" ? ProvinceType.Sea : ProvinceType.Lake;
+                province.Category = stringData[4];
                 province.SomeBool = stringData[5] == "true";
-                province.OtherType = stringData[6];
+                province.Type = stringData[6];
                 province.Continent = int.Parse(stringData[7]);
 
                 provinces.Add(province);
@@ -352,6 +352,9 @@ public class MapLoader : MonoBehaviour {
 			foreach(var l in stateTypeLines)
 				Map.stateTypes.Add(l);
 
+            var provCatLines = File.ReadAllLines(directory + "/map/MAP_EDITOR_PROVINCE_CATEGORIES.txt");
+            foreach (var l in provCatLines)
+                Map.provinceCategories.Add(l);
             Debug.Log("Setting map data");
 
             Map.Provinces = provinces;

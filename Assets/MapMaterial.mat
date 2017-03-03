@@ -114,7 +114,7 @@ Material:
       second: 1
     - first:
         name: _StateOverlay
-      second: 1
+      second: 0
     - first:
         name: _ToggleOnlyStates
       second: 1
@@ -154,13 +154,13 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: _SelectedProvinceColor
-      second: {r: 0.7372549, g: 0.019607844, b: 0, a: 0}
+      second: {r: 0.101960786, g: 0.023529412, b: 0, a: 0}
     - first:
         name: _SelectedRegionColor
       second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _SelectedStateColor
-      second: {r: 0.7372549, g: 0.019607844, b: 0.15686275, a: 0.5882353}
+      second: {r: 0, g: 0, b: 0, a: 0}
     - first:
         name: _SelectedSupplyColor
       second: {r: 1, g: 1, b: 1, a: 1}

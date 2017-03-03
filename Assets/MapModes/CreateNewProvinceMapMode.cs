@@ -7,7 +7,7 @@ public class CreateNewProvinceMapMode : MapMode
 {
     Province selectedProvince;
 
-    public ProvinceType Type;
+    public string Type;
     public bool SomeBool;
     public int Continent;
     string OtherType;
@@ -81,13 +81,14 @@ public class CreateNewProvinceMapMode : MapMode
         Border.gameObject.SetActive(false);
         Destroy(brushSizeText.gameObject);
         Destroy(provinceSelection.gameObject);
+        Destroy(initialFillerText.gameObject);
     }
     public override void OnLeft(int x, int y)
     {
         if (CopyAndFillSome)
         {
             var selectedProv = Map.Tiles[x, y].Province;
-            selectedProvince = Map.CreateNewProvince(selectedProv.Type, selectedProv.SomeBool, selectedProv.OtherType, selectedProv.Continent, selectedProv);
+            selectedProvince = Map.CreateNewProvince(selectedProv.Category, selectedProv.SomeBool, selectedProv.Type, selectedProv.Continent, selectedProv);
 
             Renderer.LitUpProvince(selectedProvince);
             provinceSelection.text = "Province created: " + selectedProvince.ID;

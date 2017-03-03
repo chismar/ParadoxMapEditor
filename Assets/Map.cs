@@ -23,6 +23,7 @@ public class Map : ScriptableObject
     public int NextID;
 	public List<string> provinceTypes = new List<string>();
 	public List<string> stateTypes = new List<string>();
+    public List<string> provinceCategories = new List<string>();
 	public Dictionary<string, string> Localisation = new Dictionary<string, string>();
 	public void SetLoc(string id, string text)
 	{
@@ -98,7 +99,7 @@ public class Map : ScriptableObject
         
     }
 
-    public Province CreateNewProvince(ProvinceType type, bool someBool, string otherType, int continent, Province fromProvince = null)
+    public Province CreateNewProvince(string type, bool someBool, string otherType, int continent, Province fromProvince = null)
     {
         Province p = new Province();
 
@@ -108,9 +109,9 @@ public class Map : ScriptableObject
         Provinces.Add(p);
         ProvincesByID.Add(p.ID, p);
         ColorCodedProvinces.Add(p.MapUniqueColor, p);
-        p.Type = type;
+        p.Category = type;
         p.SomeBool = someBool;
-        p.OtherType = otherType;
+        p.Type = otherType;
         p.Continent = continent;
         if (fromProvince != null)
         {

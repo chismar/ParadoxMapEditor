@@ -70,9 +70,9 @@ public class ProjectSaver : MonoBehaviour
             builder.Append(province.MapUniqueColor.R).Append(';');
             builder.Append(province.MapUniqueColor.G).Append(';');
             builder.Append(province.MapUniqueColor.B).Append(';');
-            builder.Append(province.Type == ProvinceType.Lake? "lake" : (province.Type == ProvinceType.Land? "land" : "sea")).Append(';');
+            builder.Append(province.Category).Append(';');
             builder.Append(province.SomeBool?"true":"false").Append(';');
-            builder.Append(province.OtherType).Append(';');
+            builder.Append(province.Type).Append(';');
             builder.Append(province.Continent).AppendLine();
             var lineBytes = encoder.GetBytes(builder.ToString());
             defStream.Write(lineBytes,0, lineBytes.Length);

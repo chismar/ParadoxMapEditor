@@ -16,7 +16,7 @@ public class MapRenderer : MonoBehaviour
 
     int stateOverlayProp;
 
-	public enum RenderMode { Normal, ProvinceType, StateType, Owner }
+	public enum RenderMode { Normal, ProvinceType, StateType, Owner, ProvinceCategory }
 	Dictionary<string, Color32> typeColor = new Dictionary<string, Color32>();
     void Awake()
     {
@@ -66,6 +66,7 @@ public class MapRenderer : MonoBehaviour
     RenderMode mode = RenderMode.Normal;
 	public void ChangeMode(RenderMode mode)
 	{
+        Debug.Log("Changing mode to " + mode);
 		this.mode = mode;
 		if (mode != RenderMode.Normal)
 			LitUpProvince (null);
@@ -87,6 +88,8 @@ public class MapRenderer : MonoBehaviour
                 ChangeMode(RenderMode.ProvinceType);
             if (Input.GetKeyUp(KeyCode.Alpha7))
                 ChangeMode(RenderMode.Owner);
+            if (Input.GetKeyUp(KeyCode.Alpha6))
+                ChangeMode(RenderMode.ProvinceCategory);
         }
         if (map == null)
         {
@@ -256,16 +259,19 @@ public class MapRenderer : MonoBehaviour
 					color.a = 255;
 			}
 		} else {
-			if (tile.BorderCount > 0)
-				color = Color.black;
-			else {
+            if (tile.BorderCount > 0)
+                color = Color.black;
+            else {
                 if (mode == RenderMode.ProvinceType)
-                    typeColor.TryGetValue(tile.Province.OtherType, out color);
+                    typeColor.TryGetValue(tile.Province.Type, out color);
                 else if (mode == RenderMode.Owner)
                 {
 
                     if (tile.Province.State != null && tile.Province.State.Owner != null)
                         typeColor.TryGetValue(tile.Province.State.Owner.Tag, out color);
+                } else if (mode == RenderMode.ProvinceCategory)
+                {
+                    typeColor.TryGetValue(tile.Province.Category, out color);
                 }
                 else if (tile.Province.State != null)
                     typeColor.TryGetValue(tile.Province.State.StateCategory, out color);

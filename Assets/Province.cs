@@ -7,9 +7,9 @@ public class Province {
     
     public int ID; 
     public System.Drawing.Color MapUniqueColor;
-    public ProvinceType Type;
+    public string Category;
     public bool SomeBool;
-    public string OtherType;
+    public string Type;
     public int Continent; // Probably continent
     public HashSet<Tile> Tiles = new HashSet<Tile>();
     public Dictionary<Province, Adjacency> Adjacencies = new Dictionary<Province, Adjacency>();
@@ -73,5 +73,3 @@ public class Province {
 
 
 }
-
-public enum ProvinceType { Land, Sea, Lake }

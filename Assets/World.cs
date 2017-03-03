@@ -321,6 +321,24 @@ public class Country
 
 	public Country Clone(Country c)
 	{
+        c.Ideas = this.Ideas;
+        c.Leaders = this.Leaders;
+        c.Parties = this.Parties;
+        c.Name = this.Name;
+        c.relations = this.relations;
+        c.RulingParty = this.RulingParty;
+        c.Capital = this.Capital;
+        c.Color = UnityEngine.Random.ColorHSV();
+        c.Color.a = 255;
+        c.ColorUI = UnityEngine.Random.ColorHSV();
+        c.ColorUI.a = 255;
+        c.CultureColor = UnityEngine.Random.ColorHSV();
+        c.CultureColor.a = 255;
+        c.CreateFaction = this.CreateFaction;
+        c.AddToFaction = this.AddToFaction;
+        c.Commanders = this.Commanders;
+        c.ElectionsAllowed = this.ElectionsAllowed;
+        c.Technologies = this.Technologies;
 		return c;
 	}
 }
