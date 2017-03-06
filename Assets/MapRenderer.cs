@@ -15,8 +15,8 @@ public class MapRenderer : MonoBehaviour
     int materialSupplyProp;
 
     int stateOverlayProp;
-
-	public enum RenderMode { Normal, ProvinceType, StateType, Owner, ProvinceCategory }
+    bool showBorders = true;
+	public enum RenderMode { Normal, ProvinceType, StateType, Owner, ProvinceCategory, BordersCount }
 	Dictionary<string, Color32> typeColor = new Dictionary<string, Color32>();
     void Awake()
     {
@@ -45,15 +45,14 @@ public class MapRenderer : MonoBehaviour
         }
 	}
     Vector2 scrollPos = Vector2.zero;
+    bool showKeyBindings = true;
     private void OnGUI()
     {
         if (showHelp == false)
             return;
-        if (mode == RenderMode.Normal)
-            return;
         Rect rect = Rect.MinMaxRect(0, 0, 100, 400);
         scrollPos = GUI.BeginScrollView(rect, scrollPos, Rect.MinMaxRect(0, 0, 100, typeColor.Count * 30));
-        
+        var color = GUI.color;
         int index = 0;
         foreach (var colorPair in typeColor)
         {
@@ -61,7 +60,34 @@ public class MapRenderer : MonoBehaviour
             GUI.Label(Rect.MinMaxRect(0, index * 30, 100, index * 30 + 30), colorPair.Key);
             index++;
         }
-        GUI.EndGroup();
+        GUI.EndScrollView();
+
+        GUI.color = color;
+        if (showKeyBindings)
+        {
+            index = 0;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), showBorders ? "Shift + B => hide borders" : "Shift+B => show borders");
+            index++;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + 0 => Normal render mode");
+            index++;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + 9 => State type render mode");
+            index++;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + 8 => Province type render mode");
+            index++;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + 7 => Countries render mode");
+            index++;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + 6 => Province category render mode");
+            index++;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + 5 => Bordering render mode");
+            index++;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + K => hide key bindings");
+        }
+        else
+        {
+            index = 0;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + K => show key bindings");
+        }
+
     }
     RenderMode mode = RenderMode.Normal;
 	public void ChangeMode(RenderMode mode)
@@ -90,6 +116,17 @@ public class MapRenderer : MonoBehaviour
                 ChangeMode(RenderMode.Owner);
             if (Input.GetKeyUp(KeyCode.Alpha6))
                 ChangeMode(RenderMode.ProvinceCategory);
+            if (Input.GetKeyUp(KeyCode.Alpha5))
+                ChangeMode(RenderMode.BordersCount);
+            if (Input.GetKeyUp(KeyCode.B))
+            {
+                showBorders = !showBorders;
+                ChangeMode(mode);
+            }
+            if(Input.GetKeyUp(KeyCode.K))
+            {
+                showKeyBindings = !showKeyBindings;
+            }
         }
         if (map == null)
         {
@@ -245,7 +282,7 @@ public class MapRenderer : MonoBehaviour
     {
         Color32 color = Color.clear;
 		if (mode == RenderMode.Normal) {
-			if (tile.BorderCount > 0) {
+			if (tile.BorderCount > 0 && showBorders) {
 				if (tile.Province.StrategicRegion != null && tile.Province.State != null && tile.Province.State.Supply != null) {
 
 					tile.Province.StrategicRegion.TextureColor (ref color);
@@ -258,8 +295,22 @@ public class MapRenderer : MonoBehaviour
 				else
 					color.a = 255;
 			}
-		} else {
-            if (tile.BorderCount > 0)
+		}
+        else if(mode == RenderMode.BordersCount)
+        {
+            if (tile.BorderCount == 0)
+                color = Color.black;
+            else if (tile.BorderCount == 1)
+                color = new Color32(20, 20, 20, 255);
+            else if (tile.BorderCount == 2)
+                color = new Color32(60, 60, 60, 255);
+            else if (tile.BorderCount == 3)
+                color = new Color32(140, 140, 140, 255);
+            else
+                color = (Color32)Color.red;
+        }
+        else {
+            if (tile.BorderCount > 0 && showBorders)
                 color = Color.black;
             else {
                 if (mode == RenderMode.ProvinceType)
