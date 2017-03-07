@@ -172,6 +172,8 @@ public class MapRenderer : MonoBehaviour
             {
                 var chunkTex = new Texture2D(chunkSize, chunkSize);
                 chunkTex.filterMode = FilterMode.Point;
+                chunkTex.anisoLevel = 0;
+                chunkTex.mipMapBias = 0f;
                 chunks[i, j] = chunkTex;
                 GameObject chunkGo = GameObject.Instantiate(ChunkProto);
                 var chunkData = chunkGo.GetComponent<ChunkMapController>();

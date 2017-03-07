@@ -34,15 +34,7 @@ public class RendererController : MonoBehaviour {
         {
             transform.position += Vector3.right * Time.deltaTime * Speed * cam.orthographicSize;
         }
-        if (Input.GetKey(KeyCode.Q))
-        {
-            cam.orthographicSize *= (1f - zoomSpeed);
-        }
-        if (Input.GetKey(KeyCode.E))
-        {
-
-            cam.orthographicSize *= (1f + zoomSpeed);
-        }
+        
         retainZoom -= Time.deltaTime;
         if(Input.GetKey(KeyCode.LeftControl))
         {
@@ -64,12 +56,29 @@ public class RendererController : MonoBehaviour {
                 PlayerPrefs.SetFloat("zoom_speed", zoomSpeed);
             }
         }
+        else
+        {
+            if (Input.GetKey(KeyCode.Q))
+            {
+                cam.orthographicSize *= (1f - zoomSpeed);
+            }
+            if (Input.GetKey(KeyCode.E))
+            {
+
+                cam.orthographicSize *= (1f + zoomSpeed);
+            }
+        }
+        
         
     }
 
     private void OnGUI()
     {
         if (retainZoom > 0)
+        {
+            GUI.color = new Color(1f, 1f, 1f, retainZoom);
             GUI.Label(Rect.MinMaxRect(Screen.width / 2 - 60, Screen.height / 2 - 15, Screen.width / 2 + 60, Screen.height / 2 + 15), "zoom speed: " + zoomSpeed);
+
+        }
     }
 }
