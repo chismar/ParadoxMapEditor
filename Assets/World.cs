@@ -74,7 +74,7 @@ public class World : ScriptableObject
             //Debug.Log(gfxPath);
             country.Load(this, histFile, gfxPath, null);
         }
-
+        Year = int.Parse(File.ReadAllText(dir + "/map/year.txt"));
 	}
 	string dir;
 	public void SaveTo(string directory)
@@ -251,7 +251,8 @@ public class Country
 
 	public void SaveHistory(string dir)
 	{
-        var file = new StreamWriter(String.Format("{0}/{1} - {2}.txt", dir, Tag, Name));
+        var s = File.Create(String.Format("{0}/{1} - {2}.txt", dir, Tag, Name));
+        var file = new StreamWriter(s, new UTF8Encoding(true));
 
         if (Capital != null)
             file.WriteLine("capital = " + Capital.ID);
@@ -302,6 +303,7 @@ public class Country
             file.WriteLine(relation.ToString());
         }
         file.Close();
+        s.Close();
 	}
 
 	public void SaveGFX(string dir)

@@ -7,6 +7,7 @@ public class Controller : MonoBehaviour
 {
     public MapMode CurrentMapMode;
 
+    bool loaded = false;
     MapLoader loader;
     void Start()
     {
@@ -17,13 +18,15 @@ public class Controller : MonoBehaviour
     void OnMapLoad()
     {
         loader.FinishedLoadingMap -= OnMapLoad;
+        loaded = true;
         SelectMapMode(GetComponent<ProvinceSelectionMapMode>()); CurrentMapMode.Map = loader.Map; EnableAllMapModes();
     }
     private void Update()
     {
         if (Input.GetKeyUp(KeyCode.Escape))
             Application.Quit();
-        
+        if (Input.GetKeyUp(KeyCode.H))
+            showCoords = !showCoords;
     }
 
     private void EnableAllMapModes()
@@ -80,5 +83,28 @@ public class Controller : MonoBehaviour
         if (CurrentMapMode == null)
             return;
         CurrentMapMode.OnRightDrag(x, y);
+    }
+    int curTileX = 0;
+    int curTileY = 0;
+    bool showCoords = false;
+
+    public void UpdatePointer(int x, int y)
+    {
+        curTileX = x;
+        curTileY = y;
+    }
+    private void OnGUI()
+    {
+        if(loaded)
+        if(showCoords)
+        {
+            int curX = (int)Input.mousePosition.x;
+            int curY = Screen.height - (int)Input.mousePosition.y;
+            int offsetX = 50;
+            int offsetY = 20;
+            GUI.Label(Rect.MinMaxRect(curX + 20, curY, curX + 50 +  offsetX, curY + offsetY), "X: " + curTileX);
+            GUI.Label(Rect.MinMaxRect(curX + 50 + offsetX, curY, curX + 50 +  offsetX * 2, curY + offsetY), "Y: " + (loader.Map.Height - curTileY));
+
+        }
     }
 }

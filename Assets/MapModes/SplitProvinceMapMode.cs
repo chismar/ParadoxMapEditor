@@ -107,7 +107,7 @@ public class SplitProvinceMapMode : MapMode
         }
         var lr = GetComponent<LineRenderer>();
         lr.sortingOrder = 1;
-		lr.numPositions = splitCenters.Count * 3;
+		lr.positionCount = splitCenters.Count * 3;
         for (int j = 0; j < splitCenters.Count; j++)
         {
             lr.SetPosition(j * 3, pivot - Vector2.one * Renderer.chunkSize/2);

@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using System;
 
-public class ChunkMapController : MonoBehaviour, IPointerDownHandler, IPointerClickHandler, IPointerUpHandler, IDragHandler
+public class ChunkMapController : MonoBehaviour, IPointerDownHandler, IPointerClickHandler, IPointerUpHandler, IDragHandler, IPointerExitHandler, IPointerEnterHandler
 {
     RectTransform transform;
     public Texture2D TargetTexture;
@@ -63,5 +63,30 @@ public class ChunkMapController : MonoBehaviour, IPointerDownHandler, IPointerCl
         int x = (int)localCursor.x;
         int y = (int)localCursor.y;
         Controller.OnDrag(MapOffsetX + x, MapOffsetY + y, eventData.button);
+    }
+    bool hover = false;
+    public void OnPointerExit(PointerEventData eventData)
+    { 
+
+        hover = false;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        hover = true;
+    }
+
+    private void Update()
+    {
+        if(hover)
+        {
+            Vector2 localCursor;
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(GetComponent<RectTransform>(), Input.mousePosition, Camera.main, out localCursor))
+                return;
+            localCursor = new Vector2(localCursor.x / transform.sizeDelta.x + 0.5f, localCursor.y / transform.sizeDelta.y + 0.5f) * Size;
+            int x = (int)localCursor.x;
+            int y = (int)localCursor.y;
+            Controller.UpdatePointer(MapOffsetX + x, MapOffsetY + y);
+        }
     }
 }
