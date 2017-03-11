@@ -217,6 +217,7 @@ public class MapLoader : MonoBehaviour {
             for ( int i = 0; i < provincesFile.Length; i++)
             {
                 var province = new Province();
+                province.Map = Map;
                 var stringData = provincesFile[i].Split(';');
             
                 province.ID = int.Parse(stringData[0]);

@@ -102,7 +102,7 @@ public class Map : ScriptableObject
     public Province CreateNewProvince(string type, bool someBool, string otherType, int continent, Province fromProvince = null)
     {
         Province p = new Province();
-
+        p.Map = this;
         p.ID = NextID++;
         p.MapUniqueColor = p.SerializedColor();
 

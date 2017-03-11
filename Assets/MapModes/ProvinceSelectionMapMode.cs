@@ -110,11 +110,13 @@ public class ProvinceSelectionMapMode : MapMode
         {
             for (int j = lowY; j <= highY; j++)
             {
+                if(i < Map.Width && i >= 0 && j < Map.Height && j >= 0)
                 Map.AssignTileTo(i, j, selectedProvince);
             }
         }
         for (int i = leftX - 1; i <= rightX + 1; i++)
             for (int j = lowY - 1; j <= highY + 1; j++)
-                Renderer.Update(i, j);
+                if (i < Map.Width && i >= 0 && j < Map.Height && j >= 0)
+                    Renderer.Update(i, j);
     }
 }

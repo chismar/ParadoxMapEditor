@@ -16,7 +16,7 @@ public class MapRenderer : MonoBehaviour
 
     int stateOverlayProp;
     bool showBorders = true;
-	public enum RenderMode { Normal, ProvinceType, StateType, Owner, ProvinceCategory, BordersCount }
+	public enum RenderMode { Normal, ProvinceType, StateType, Owner, ProvinceCategory, BordersCount, Chunks, IllegalCrossings }
 	Dictionary<string, Color32> typeColor = new Dictionary<string, Color32>();
     void Awake()
     {
@@ -80,6 +80,10 @@ public class MapRenderer : MonoBehaviour
             index++;
             GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + 5 => Bordering render mode");
             index++;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + 4 => Chunks render mode");
+            index++;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + 3 => Illegal crossings render mode");
+            index++;
             GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + K => hide key bindings");
         }
         else
@@ -89,7 +93,7 @@ public class MapRenderer : MonoBehaviour
         }
 
     }
-    RenderMode mode = RenderMode.Normal;
+    public RenderMode mode = RenderMode.Normal;
 	public void ChangeMode(RenderMode mode)
 	{
         Debug.Log("Changing mode to " + mode);
@@ -118,6 +122,10 @@ public class MapRenderer : MonoBehaviour
                 ChangeMode(RenderMode.ProvinceCategory);
             if (Input.GetKeyUp(KeyCode.Alpha5))
                 ChangeMode(RenderMode.BordersCount);
+            if (Input.GetKeyUp(KeyCode.Alpha4))
+                ChangeMode(RenderMode.Chunks);
+            if (Input.GetKeyUp(KeyCode.Alpha3))
+                ChangeMode(RenderMode.IllegalCrossings);
             if (Input.GetKeyUp(KeyCode.B))
             {
                 showBorders = !showBorders;
@@ -265,9 +273,10 @@ public class MapRenderer : MonoBehaviour
 	}
     public void Update(int x, int y)
     {
-        if (y == -1 && y == map.Height)
+        if (y < 0 && y >= map.Height)
             return;
-        x = x == -1 ? map.Width - 1 : (x == map.Width ? 0 : x);
+        if (x < 0 && x >= map.Width)
+            return;
         int chunkOffsetX;
         int chunkOffsetY;
         var chunkTex = GetChunk(x, y, out chunkOffsetX, out chunkOffsetY);
@@ -279,26 +288,60 @@ public class MapRenderer : MonoBehaviour
         forUpdate.Add(chunkTex);
 
     }
-
+    Dictionary<Chunk, Color32> colorsPerChunk = new Dictionary<Chunk, Color32>();
     Color32 GetColorForTile(Tile tile)
     {
         Color32 color = Color.clear;
-		if (mode == RenderMode.Normal) {
-			if (tile.BorderCount > 0 && showBorders) {
-				if (tile.Province.StrategicRegion != null && tile.Province.State != null && tile.Province.State.Supply != null) {
+        if (mode == RenderMode.Normal)
+        {
+            if (tile.BorderCount > 0 && showBorders)
+            {
+                if (tile.Province.StrategicRegion != null && tile.Province.State != null && tile.Province.State.Supply != null)
+                {
 
-					tile.Province.StrategicRegion.TextureColor (ref color);
-					tile.Province.State.Supply.TextureColor (ref color);
-				}
-			} else {
-				tile.Province.TextureColor (ref color);
-				if (tile.Province.State != null)
-					tile.Province.State.TextureColor (ref color);
-				else
-					color.a = 255;
-			}
-		}
-        else if(mode == RenderMode.BordersCount)
+                    tile.Province.StrategicRegion.TextureColor(ref color);
+                    tile.Province.State.Supply.TextureColor(ref color);
+                }
+            }
+            else
+            {
+                tile.Province.TextureColor(ref color);
+                if (tile.Province.State != null)
+                    tile.Province.State.TextureColor(ref color);
+                else
+                    color.a = 255;
+            }
+        }
+        else if (mode == RenderMode.IllegalCrossings)
+        {
+            if (tile.BorderCount > 0)
+            {
+                if(tile.X > 0 && tile.Y > 0)
+                {
+                    var leftTile = map.Tiles[tile.X - 1, tile.Y];
+                    var topTile = map.Tiles[tile.X, tile.Y - 1];
+                    var topLeftTile = map.Tiles[tile.X - 1, tile.Y - 1];
+                    if(tile.Province != leftTile.Province && tile.Province != topTile.Province && tile.Province != topLeftTile.Province &&
+                       leftTile.Province != topLeftTile.Province && topTile.Province != topLeftTile.Province && leftTile.Province != topTile.Province)
+                    {
+                        color = Color.red;
+                        return color;
+                    }
+                }
+            }
+            byte value = (byte)(tile.Province.ID % 255 / 2);
+            color = new Color32(value, value, value,255);
+        }
+        else if (mode == RenderMode.Chunks)
+        {
+            if (!colorsPerChunk.TryGetValue(tile.Chunk, out color))
+            {
+                color = Random.ColorHSV();
+                color.a = 255;
+                colorsPerChunk.Add(tile.Chunk, color);
+            }
+        }
+        else if (mode == RenderMode.BordersCount)
         {
             if (tile.BorderCount == 0)
                 color = Color.black;
@@ -311,10 +354,12 @@ public class MapRenderer : MonoBehaviour
             else
                 color = (Color32)Color.red;
         }
-        else {
+        else
+        {
             if (tile.BorderCount > 0 && showBorders)
                 color = Color.black;
-            else {
+            else
+            {
                 if (mode == RenderMode.ProvinceType)
                     typeColor.TryGetValue(tile.Province.Type, out color);
                 else if (mode == RenderMode.Owner)
@@ -322,14 +367,15 @@ public class MapRenderer : MonoBehaviour
 
                     if (tile.Province.State != null && tile.Province.State.Owner != null)
                         typeColor.TryGetValue(tile.Province.State.Owner.Tag, out color);
-                } else if (mode == RenderMode.ProvinceCategory)
+                }
+                else if (mode == RenderMode.ProvinceCategory)
                 {
                     typeColor.TryGetValue(tile.Province.Category, out color);
                 }
                 else if (tile.Province.State != null)
                     typeColor.TryGetValue(tile.Province.State.StateCategory, out color);
-			}
-		}
+            }
+        }
         return color;
     }
     Texture2D GetChunk(int x, int y, out int chunkOffsetX, out int chunkOffsetY)

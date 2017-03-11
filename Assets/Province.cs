@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+
 public class Province {
 
-    
+    public Map Map;
     public int ID; 
     public System.Drawing.Color MapUniqueColor;
     public string Category;
@@ -12,6 +14,7 @@ public class Province {
     public string Type;
     public int Continent; // Probably continent
     public HashSet<Tile> Tiles = new HashSet<Tile>();
+    public HashSet<Chunk> Chunks = new HashSet<Chunk>();
     public Dictionary<Province, Adjacency> Adjacencies = new Dictionary<Province, Adjacency>();
     StrategicRegion region;
     public StrategicRegion StrategicRegion { get { return region; } set { if (region == value) return; if (region != null) region.Provinces.Remove(this); region = value; if(region != null) region.Provinces.Add(this); } }
@@ -39,10 +42,95 @@ public class Province {
             return new Vector2(midX, midY);
         }
     }
+    public static Stack<Chunk> chunkPool = new Stack<Chunk>();
     public void AttachTile(Tile tile)
     {
         if(Tiles.Add(tile))
+        {
             tile.Province = this;
+            AssignChunk(tile);
+        }
+    }
+
+    void AssignChunk(Tile tile)
+    {
+        if (tile.X > 0)
+        {
+            var nextTile = Map.Tiles[tile.X - 1, tile.Y];
+            if (nextTile.Province == tile.Province && nextTile.Chunk != null)
+            {
+                tile.Chunk = nextTile.Chunk;
+            }
+        }
+        if (tile.X < Map.Width - 1)
+        {
+            var nextTile = Map.Tiles[tile.X + 1, tile.Y];
+            if (nextTile.Province == tile.Province && nextTile.Chunk != null)
+            {
+                if (Chunks.Contains(tile.Chunk) && tile.Chunk != nextTile.Chunk)
+                    MergeChunks(tile.Chunk, nextTile.Chunk);
+                else
+                    tile.Chunk = nextTile.Chunk;
+            }
+        }
+        if (tile.Y > 0)
+        {
+            var nextTile = Map.Tiles[tile.X, tile.Y - 1];
+            if (nextTile.Province == tile.Province && nextTile.Chunk != null)
+            {
+                if (Chunks.Contains(tile.Chunk) && tile.Chunk != nextTile.Chunk)
+                    MergeChunks(tile.Chunk, nextTile.Chunk);
+                else
+                    tile.Chunk = nextTile.Chunk;
+            }
+        }
+        if (tile.Y < Map.Height - 1)
+        {
+            var nextTile = Map.Tiles[tile.X, tile.Y + 1];
+            if (nextTile.Province == tile.Province && nextTile.Chunk != null)
+            {
+                if (Chunks.Contains(tile.Chunk) && tile.Chunk != nextTile.Chunk)
+                    MergeChunks(tile.Chunk, nextTile.Chunk);
+                else
+                    tile.Chunk = nextTile.Chunk;
+            }
+        }
+        if (tile.Chunk == null)
+        {
+            /*if (chunkPool.Count > 0)
+            {
+
+                tile.Chunk = chunkPool.Pop();
+                tile.Chunk.Clear();
+            }
+            else*/
+                tile.Chunk = new Chunk();
+            Chunks.Add(tile.Chunk);
+        }
+    }
+    static List<Tile> cachedTiles = new List<Tile>();
+    private void MergeChunks(Chunk chunk1, Chunk chunk2)
+    {
+        Chunk from = null;
+        Chunk to = null;
+        if(chunk1.Size > chunk2.Size)
+        {
+            from = chunk2;
+            to = chunk1;
+        }
+        else
+        {
+            from = chunk1;
+            to = chunk2;
+        }
+        chunkPool.Push(from);
+        cachedTiles.Clear();
+        foreach (var t in from.Tiles)
+            cachedTiles.Add(t);
+        foreach (var t in cachedTiles)
+            t.Chunk = to;
+
+
     }
 
     public bool HasTile(Tile tile)
