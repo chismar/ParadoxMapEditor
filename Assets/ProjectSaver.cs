@@ -183,10 +183,149 @@ public class ProjectSaver : MonoBehaviour
         Directory.SetCurrentDirectory(curDir);
 
         Map.World.SaveTo(dir);
+
+        var buildings_raw = File.ReadAllLines(dir + "/map/BUILDINGS_GENERATION_TEMPLATE.txt");
+        List<Building> buildings = new List<Building>();
+        foreach(var line in buildings_raw)
+        {
+            Building b = new Building();
+            var parts = line.Split(' ');
+            b.Name = parts[0];
+            b.Count = int.Parse(parts[1]);
+            b.Coastal = parts.Length > 2 ? parts[2] == "coastal" : false;
+            b.Port = parts.Length > 3 ? parts[3] == "port" : false;
+            buildings.Add(b);
+        }
+
+        //var buildingsStream = File.Create(dir + "/map/buildings.txt");
+        formatBuilder.Length = 0;
+        System.Random random = new System.Random(0);
+        foreach(var state in Map.States)
+        {
+            var coastLine = CoastLine(state);
+            foreach(var building in buildings)
+            {
+                if (building.Coastal)
+                    continue;
+                for ( int i = 0; i < building.Count; i++)
+                {
+                    formatBuilder.Append(state.ID).Append(";").Append(building.Name).Append(";");
+                    var province = state.Provinces[random.Next(state.Provinces.Count)];
+                    int tileId = random.Next(province.Tiles.Count);
+                    int tileIndex = 0;
+                    Tile chosenTile = null;
+                    foreach ( var tile in province.Tiles)
+                    {
+                        if (tileIndex == tileId)
+                        {
+                            chosenTile = tile;
+                            break;
+                        }
+                        tileIndex++;
+                    }
+                    
+                    int probablyX = chosenTile.X;
+                    int probablyScale = random.Next(9, 15);
+                    int probablyY = chosenTile.Y;
+                    int probablyRotation = random.Next(-1, 5);
+                    formatBuilder.
+                        Append(probablyX).Append(".00;").Append(probablyScale).Append(".00;").
+                        Append(probablyY).Append(".00;").Append(probablyRotation).Append(".00;");
+                    formatBuilder.Append("0");
+                    formatBuilder.AppendLine();
+                }
+            }
+            if(coastLine.Count > 0)
+            foreach (var building in buildings)
+            {
+                if (!building.Coastal)
+                    continue;
+                for (int i = 0; i < building.Count; i++)
+                {
+                    formatBuilder.Append(state.ID).Append(";").Append(building.Name).Append(";");
+                    Tile chosenTile = coastLine[random.Next(coastLine.Count)];
+                    
+                    int probablyX = chosenTile.X;
+                    int probablyScale = random.Next(9, 15);
+                    int probablyY = chosenTile.Y;
+                    int probablyRotation = random.Next(-1, 5);
+                    formatBuilder.
+                        Append(probablyX).Append(".00;").Append(probablyScale).Append(".00;").
+                        Append(probablyY).Append(".00;").Append(probablyRotation).Append(".00;");
+                    if(building.Port)
+                        formatBuilder.Append(chosenTile.Province.ID);
+                    else
+                        formatBuilder.Append("0");
+                    formatBuilder.AppendLine();
+                }
+            }
+        }
+        File.WriteAllText(dir + "/map/buildings.txt", formatBuilder.ToString());
+        //buildingsStream.Close();
         Renderer.FullRedraw();
     }
 
+    List<Tile> coastTiles = new List<Tile>();
+    List<Tile> CoastLine(State state)
+    {
+        coastTiles.Clear();
+        foreach(var province in state.Provinces)
+        {
+            foreach(var tile in province.Tiles)
+            {
+                if(tile.X > 0)
+                {
+                    var nextTile = Map.Tiles[tile.X - 1, tile.Y];
+                    if (nextTile.Province.Category == "sea")
+                    {
+                        coastTiles.Add(tile);
+                        break;
+                    }
+                }
+                if(tile.Y > 0)
+                {
+
+                    var nextTile = Map.Tiles[tile.X, tile.Y -1];
+                    if (nextTile.Province.Category == "sea")
+                    {
+                        coastTiles.Add(tile);
+                        break;
+                    }
+                }
+                if(tile.X < Map.Width - 1)
+                {
+
+                    var nextTile = Map.Tiles[tile.X + 1, tile.Y];
+                    if (nextTile.Province.Category == "sea")
+                    {
+                        coastTiles.Add(tile);
+                        break;
+                    }
+                }
+                if(tile.Y < Map.Height - 1)
+                {
+
+                    var nextTile = Map.Tiles[tile.X , tile.Y + 1];
+                    if (nextTile.Province.Category == "sea")
+                    {
+                        coastTiles.Add(tile);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return coastTiles;
+    }
     
+}
+
+class Building
+{
+    public string Name;
+    public int Count;
+    public bool Coastal;
+    public bool Port;
 }
 
 public static class DirExt

@@ -21,7 +21,7 @@ public class StrategicRegionsMapMode : MapMode
         controls.RegisterCallback(() => controller.SelectMapMode(this), "Regions mode");
 
     }
-
+    
     private void Update()
     {
         if(Input.GetKeyUp(KeyCode.R))
