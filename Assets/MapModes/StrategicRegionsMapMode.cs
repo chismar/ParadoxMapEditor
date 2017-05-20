@@ -21,28 +21,66 @@ public class StrategicRegionsMapMode : MapMode
         controls.RegisterCallback(() => controller.SelectMapMode(this), "Regions mode");
 
     }
-    
     private void Update()
     {
-        if(Input.GetKeyUp(KeyCode.R))
+        if(enabled)
         {
-            var state = Map.States.Find(s => s.Provinces.Count >0 &&  s.Provinces.Find(p => p.StrategicRegion != null && p.StrategicRegion != s.Provinces[0].StrategicRegion) != null);
-            if(state != null)
+            if(Input.GetKeyUp(KeyCode.N) && selectedProvince != null)
             {
-                selectedProvince = state.Provinces[0];
+                selectedProvince.StrategicRegion = new StrategicRegion();
+                selectedProvince.StrategicRegion.ID = Map.StrategicRegions.Count;
+                Map.StrategicRegions.Add(selectedProvince.StrategicRegion);
+                foreach (var tile in selectedProvince.Tiles)
+                    Renderer.Update(tile);
+
                 Renderer.LitUpProvince(selectedProvince);
-                provinceSelection.text = "Province selected: " + selectedProvince.ID;
-                if (selectedProvince.StrategicRegion != null)
-                    regionSelection.text = "Region selected: " + selectedProvince.StrategicRegion.ID;
-                else
-                    regionSelection.text = "Province has no Region";
-                Camera.main.transform.position = new Vector3(selectedProvince.Anchor.x - Renderer.chunkSize / 2, selectedProvince.Anchor.y - Renderer.chunkSize / 2, -10);
+            }
+            if (Input.GetKeyUp(KeyCode.R))
+            {
+                var state = Map.States.Find(s => s.Provinces.Count > 0 && s.Provinces.Find(p => p.StrategicRegion != null && p.StrategicRegion != s.Provinces[0].StrategicRegion) != null);
+                if (state != null)
+                {
+                    selectedProvince = state.Provinces[0];
+                    Renderer.LitUpProvince(selectedProvince);
+                    provinceSelection.text = "Province selected: " + selectedProvince.ID;
+                    if (selectedProvince.StrategicRegion != null)
+                        regionSelection.text = "Region selected: " + selectedProvince.StrategicRegion.ID;
+                    else
+                        regionSelection.text = "Province has no Region";
+                    Camera.main.transform.position = new Vector3(selectedProvince.Anchor.x - Renderer.chunkSize / 2, selectedProvince.Anchor.y - Renderer.chunkSize / 2, -10);
+
+                }
 
             }
-
+            if(Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyUp(KeyCode.D))
+            {
+                StrategicRegion region = null;
+                do
+                {
+                    region = Map.StrategicRegions.Find(r => r.Provinces.Count > 0 && r.Provinces.Find(p => p.Category != r.Provinces[0].Category) != null);
+                    if (region == null)
+                        break;
+                    var newRegion = new StrategicRegion();
+                    newRegion.ID = Map.StrategicRegions.Count;
+                    Map.StrategicRegions.Add(newRegion);
+                    var baseCategory = region.Provinces[0].Category;
+                    oldProvinces.Clear();
+                    foreach (var regionProv in region.Provinces)
+                        oldProvinces.Add(regionProv);
+                    foreach (var oldProv in oldProvinces)
+                        if (oldProv.Category != baseCategory)
+                        {
+                            oldProv.StrategicRegion = newRegion;
+                        }
+                } while (true);
+            }
         }
+        
     }
 
+
+
+    List<Province> oldProvinces = new List<Province>();
     public override void Enable()
     {
         base.Enable();
@@ -84,13 +122,7 @@ public class StrategicRegionsMapMode : MapMode
         }
         regionSelection.text = "Region selected: " + selectedProvince.StrategicRegion.ID;
         var targetProvince = Map.Tiles[x, y].Province;
-        if (targetProvince.StrategicRegion != selectedProvince.StrategicRegion)
-        {
-            targetProvince.StrategicRegion = selectedProvince.StrategicRegion;
-            foreach (var tile in targetProvince.Tiles)
-                Renderer.Update(tile);
-            foreach (var tile in selectedProvince.Tiles)
-                Renderer.Update(tile);
-        }
+        targetProvince.StrategicRegion = selectedProvince.StrategicRegion;
+        Renderer.Update(targetProvince);
     }
 }

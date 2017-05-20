@@ -70,13 +70,7 @@ public class SupplyAreasMapMode : MapMode
         var targetProvince = Map.Tiles[x, y].Province;
         if (targetProvince.State == null)
             return;
-        if (targetProvince.State.Supply != selectedProvince.State.Supply)
-        {
-            targetProvince.State.Supply = selectedProvince.State.Supply;
-            foreach (var tile in targetProvince.Tiles)
-                Renderer.Update(tile);
-            foreach (var tile in selectedProvince.Tiles)
-                Renderer.Update(tile);
-        }
+        targetProvince.State.Supply = selectedProvince.State.Supply;
+        Renderer.Update(targetProvince.State);
     }
 }

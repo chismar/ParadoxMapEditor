@@ -225,11 +225,11 @@ public class ProjectSaver : MonoBehaviour
                     }
                     
                     int probablyX = chosenTile.X;
-                    int probablyScale = random.Next(9, 15);
+                    int Z = 0;
                     int probablyY = chosenTile.Y;
                     int probablyRotation = random.Next(-1, 5);
                     formatBuilder.
-                        Append(probablyX).Append(".00;").Append(probablyScale).Append(".00;").
+                        Append(probablyX).Append(".00;").Append(Z).Append(".00;").
                         Append(probablyY).Append(".00;").Append(probablyRotation).Append(".00;");
                     formatBuilder.Append("0");
                     formatBuilder.AppendLine();

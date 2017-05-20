@@ -21,7 +21,7 @@ public class State
         builder.Append("state={");
         builder.Append("\t").AppendFormat("id={0}", ID).AppendLine();
         builder.Append("\t").AppendFormat("name={0}", Name).AppendLine();
-        builder.Append("\t").AppendFormat("manpower={0}", Manpower).AppendLine();
+        builder.Append("\t").AppendFormat("manpower={0}", Manpower > 0?Manpower:1000).AppendLine();
         builder.Append("\t").AppendFormat("state_category={0}", StateCategory).AppendLine();
 
         builder.Append("\t").Append("resources={").AppendLine();

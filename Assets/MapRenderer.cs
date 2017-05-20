@@ -20,13 +20,16 @@ public class MapRenderer : MonoBehaviour
 	Dictionary<string, Color32> typeColor = new Dictionary<string, Color32>();
     void Awake()
     {
-		MapLoader.FinishedLoadingMap += () => { map = MapLoader.Map; LoadColors(); FullRedraw(); };
+		MapLoader.FinishedLoadingMap += () => { map = MapLoader.Map; LoadColors(); FullRedraw();
+            mapMaterial.SetFloat("_ShowOnlySupply", 0f);
+            mapMaterial.SetFloat("_ShowOnlyRegions", 0f);
+        };
         materialProvinceProp = Shader.PropertyToID("_SelectedProvinceColor");
         materialStateProp = Shader.PropertyToID("_SelectedStateColor");
         materialRegionProp = Shader.PropertyToID("_SelectedRegionColor");
         materialSupplyProp = Shader.PropertyToID("_SelectedSupplyColor");
         stateOverlayProp = Shader.PropertyToID("_StateOverlay");
-	}
+    }
 
 	void LoadColors()
 	{
@@ -85,6 +88,8 @@ public class MapRenderer : MonoBehaviour
             GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + 3 => Illegal crossings render mode");
             index++;
             GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + K => hide key bindings");
+            index++;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + R => change border mode to " + (borderShowType == BorderShowType.All?"Only Strategic Regions" : borderShowType == BorderShowType.OnlyRegions? "Only Supply Areas" : "Both regions and areas"));
         }
         else
         {
@@ -103,6 +108,8 @@ public class MapRenderer : MonoBehaviour
 		FullRedraw ();
 	}
     bool showHelp = false;
+    enum BorderShowType {  All, OnlySupply, OnlyRegions }
+    BorderShowType borderShowType = BorderShowType.All;
     void Update()
     {
         if(Input.GetKey(KeyCode.LeftShift))
@@ -134,6 +141,32 @@ public class MapRenderer : MonoBehaviour
             if(Input.GetKeyUp(KeyCode.K))
             {
                 showKeyBindings = !showKeyBindings;
+            }
+            if(Input.GetKeyUp(KeyCode.R))
+            {
+                if (borderShowType == BorderShowType.All)
+                    borderShowType = BorderShowType.OnlyRegions;
+                else if (borderShowType == BorderShowType.OnlyRegions)
+                    borderShowType = BorderShowType.OnlySupply;
+                else
+                    borderShowType = BorderShowType.All;
+
+                switch (borderShowType)
+                {
+                    case BorderShowType.All:
+                        mapMaterial.SetFloat("_ShowOnlySupply", 0f);
+                        mapMaterial.SetFloat("_ShowOnlyRegions", 0f);
+                        break;
+                    case BorderShowType.OnlyRegions:
+                        mapMaterial.SetFloat("_ShowOnlySupply", 0f);
+                        mapMaterial.SetFloat("_ShowOnlyRegions", 1f);
+                        break;
+                    case BorderShowType.OnlySupply:
+                        mapMaterial.SetFloat("_ShowOnlySupply", 1f);
+                        mapMaterial.SetFloat("_ShowOnlyRegions", 0f);
+                        break;
+                }
+                
             }
         }
         if (map == null)
@@ -302,6 +335,16 @@ public class MapRenderer : MonoBehaviour
                     tile.Province.StrategicRegion.TextureColor(ref color);
                     tile.Province.State.Supply.TextureColor(ref color);
                 }
+                else if (tile.Province.State != null && tile.Province.State.Supply == null)
+                {
+                    color = Color.yellow;
+                } else if (tile.Province.StrategicRegion == null)
+                {
+                    color = Color.gray;
+                } else if(tile.Province.StrategicRegion != null && tile.Province.State == null)
+                {
+                    tile.Province.StrategicRegion.TextureColor(ref color);
+                }
             }
             else
             {
@@ -407,17 +450,20 @@ public class MapRenderer : MonoBehaviour
                 province.State.TextureColor(ref color);
                 mapMaterial.SetColor(materialStateProp, color);
                 mapMaterial.SetFloat(stateOverlayProp, 1f);
-                if (province.State.Supply != null && province.StrategicRegion != null)
+                if (province.State.Supply != null)
                 {
-
                     builder.Append("Supply Area = ").Append(province.State.Supply.ID).Append(" ");
-                    builder.Append("Strategic Region = ").Append(province.StrategicRegion.ID).Append(" ");
                     province.State.Supply.TextureColor(ref color);
                     mapMaterial.SetColor(materialSupplyProp, color);
+                }
+                if (province.StrategicRegion != null)
+                {
+
+                    builder.Append("Strategic Region = ").Append(province.StrategicRegion.ID).Append(" ");
                     province.StrategicRegion.TextureColor(ref color);
                     mapMaterial.SetColor(materialRegionProp, color);
                 }
-                else
+                if (province.State.Supply == null && province.StrategicRegion == null)
                 {
                     color = Color.white;
                     mapMaterial.SetColor(materialSupplyProp, color);
@@ -426,9 +472,19 @@ public class MapRenderer : MonoBehaviour
             }
             else
             {
-                color = Color.clear;
-                mapMaterial.SetColor(materialStateProp, color);
-                mapMaterial.SetFloat(stateOverlayProp, 0f);
+                if (province.StrategicRegion != null)
+                {
+
+                    builder.Append("Strategic Region = ").Append(province.StrategicRegion.ID).Append(" ");
+                    province.StrategicRegion.TextureColor(ref color);
+                    mapMaterial.SetColor(materialRegionProp, color);
+                }
+                else
+                {
+                    color = Color.clear;
+                    mapMaterial.SetColor(materialStateProp, color);
+                    mapMaterial.SetFloat(stateOverlayProp, 0f);
+                }
             }
             
             

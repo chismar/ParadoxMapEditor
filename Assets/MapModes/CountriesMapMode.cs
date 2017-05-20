@@ -63,8 +63,14 @@ public class CountriesMapMode : MapMode
 		allTags = dataPanel.PostDropdown ("all tags");
         allTags.ClearOptions();
 		allTags.AddOptions (list);
-	}
+        allTags.onValueChanged.AddListener(OnTagSelected);
+    }
 
+    void OnTagSelected(int pos)
+    {
+        var tag = allTags.options[pos].text;
+        selectedCountry = Map.World.CountriesByTag[tag];
+    }
 	public override void Disable()
 	{
 		base.Disable();

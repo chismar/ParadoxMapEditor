@@ -1,4 +1,6 @@
-﻿Shader "Unlit/MapShader"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Unlit/MapShader"
 {
 	Properties
 	{
@@ -15,6 +17,8 @@
 		_NoStateColor("No State Color", Color) = (1,1,1,1)
 		_BorderColor ("BorderColor", Color) = (1,1,1,1)
 		_StateOverlay ("StateOverlay", float) = 1
+		_ShowOnlySupply("ShowOnlySupply", float) = 0
+		_ShowOnlyRegions("ShowOnlyRegions", float) = 0
 		_InternalStateBordersColor("InternalStateBordersColor", Color) = (1,1,1,1)
 	}
 	SubShader
@@ -57,10 +61,12 @@
 			fixed4 _NoStateColor;
 			fixed4 _InternalStateBordersColor;
 			float _StateOverlay;
+			float _ShowOnlyRegions;
+			float _ShowOnlySupply;
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
@@ -87,13 +93,27 @@
 				else
 				{
 					//it's a border color, half of it is a pointer to strategic region and half to supply region
-					float litValue = (_SinTime.a + 1)/2;
-					float2 eq = (baseCol.rg == _SelectedRegionColor.rg);
-					fixed res = eq.x * eq.y;
-					col = lerp(_BorderColor, _LitUpRegionColor, litValue * res);
-					eq = (baseCol.ba == _SelectedSupplyColor.ba);
-					res = eq.x * eq.y;
-					col = lerp(col, _LitUpSupplyColor, (1-litValue) * res);
+					if(_ShowOnlyRegions == 1)
+					{
+						float2 eq = (baseCol.rg == _SelectedRegionColor.rg);
+						fixed res = eq.x * eq.y;
+						col = lerp(_BorderColor, _LitUpRegionColor, res);
+					} else if (_ShowOnlySupply == 1)
+					{
+						float2 eq = (baseCol.ba == _SelectedSupplyColor.ba);
+						fixed res = eq.x * eq.y;
+						col = lerp(col, _LitUpSupplyColor, res);
+					}
+					else
+					{
+						float litValue = (_SinTime.a + 1)/2;
+						float2 eq = (baseCol.rg == _SelectedRegionColor.rg);
+						fixed res = eq.x * eq.y;
+						col = lerp(_BorderColor, _LitUpRegionColor, litValue * res);
+						eq = (baseCol.ba == _SelectedSupplyColor.ba);
+						res = eq.x * eq.y;
+						col = lerp(col, _LitUpSupplyColor, (1-litValue) * res);
+					}
 					
 				}
 				col.a = 1;
