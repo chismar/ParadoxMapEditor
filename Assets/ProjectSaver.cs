@@ -19,15 +19,18 @@ public class ProjectSaver : MonoBehaviour
     public void SaveProject()
     {
         Map = FindObjectOfType<MapLoader>().Map;
-
+        UnityEngine.Debug.LogFormat("Map is {0}", Map);
         //Magick starts here
         Bitmap pixels = new Bitmap(Map.Width, Map.Height);
         int pId = 1;
+
+        UnityEngine.Debug.LogFormat("Map.Provinces is {0}", Map.Provinces);
         foreach (var province in Map.Provinces)
         {
             province.ID = pId++;
             province.MapUniqueColor = province.SerializedColor();
         }
+        UnityEngine.Debug.LogFormat("Map.Tiles is {0}", Map.Tiles);
         for ( int i = 0; i < Map.Tiles.GetLength(0);i++)
             for ( int j = 0; j < Map.Tiles.GetLength(1); j++)
             {
@@ -35,6 +38,7 @@ public class ProjectSaver : MonoBehaviour
                 pixels.SetPixel(tile.X, Map.Height - 1 - tile.Y, tile.Province.MapUniqueColor);
             }
         var dir = PlayerPrefs.GetString("directory");
+        UnityEngine.Debug.LogFormat("dir is {0}", dir);
         pixels.Save(dir + "/map/provinces.png", ImageFormat.Png);
         var path = Application.dataPath + "/StreamingAssets/";
         Process process = new Process();

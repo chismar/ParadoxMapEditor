@@ -25,7 +25,7 @@ public class ScriptBatch
         string[] levels = new string[] {"Assets/Menu.unity", "Assets/MainScene.unity"};
 
         // Build player.
-        BuildPipeline.BuildPlayer(levels, path + "/Editor.exe", BuildTarget.StandaloneWindows, BuildOptions.None);
+        BuildPipeline.BuildPlayer(levels, path + "/Editor.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
 
 		ZipUtil.ZipDirectory (zipToPath + "/Editor.zip", path);
 
