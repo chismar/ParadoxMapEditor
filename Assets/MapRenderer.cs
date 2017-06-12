@@ -13,14 +13,17 @@ public class MapRenderer : MonoBehaviour
     int materialStateProp;
     int materialRegionProp;
     int materialSupplyProp;
-
+    public Texture2D Overlay;
+    public Image TargetOverlayImage;
     int stateOverlayProp;
     bool showBorders = true;
-	public enum RenderMode { Normal, ProvinceType, StateType, Owner, ProvinceCategory, BordersCount, Chunks, IllegalCrossings }
-	Dictionary<string, Color32> typeColor = new Dictionary<string, Color32>();
+    public enum RenderMode { Normal, ProvinceType, StateType, Owner, ProvinceCategory, BordersCount, Chunks, IllegalCrossings }
+    Dictionary<string, Color32> typeColor = new Dictionary<string, Color32>();
     void Awake()
     {
-		MapLoader.FinishedLoadingMap += () => { map = MapLoader.Map; LoadColors(); FullRedraw();
+        MapLoader.FinishedLoadingMap += () =>
+        {
+            map = MapLoader.Map; LoadColors(); FullRedraw();
             mapMaterial.SetFloat("_ShowOnlySupply", 0f);
             mapMaterial.SetFloat("_ShowOnlyRegions", 0f);
         };
@@ -31,24 +34,38 @@ public class MapRenderer : MonoBehaviour
         stateOverlayProp = Shader.PropertyToID("_StateOverlay");
     }
 
-	void LoadColors()
-	{
+    void LoadColors()
+    {
 
-		var pathToColors = MapLoader.ChosenProjectDir + "/map/MAP_EDITOR_TYPE_COLORS.txt";
-		var lines = File.ReadAllLines (pathToColors);
-		foreach (var line in lines) {
-			var part = line.Split (' ');
-			Color32 c = new Color32 (byte.Parse (part [1]), byte.Parse (part [2]), byte.Parse (part [3]), 255);
-			typeColor.Add (part [0], c);
-		}
-        foreach(var country in map.World.CountriesByTag.Values)
+        var pathToColors = MapLoader.ChosenProjectDir + "/map/MAP_EDITOR_TYPE_COLORS.txt";
+        var lines = File.ReadAllLines(pathToColors);
+        foreach (var line in lines)
+        {
+            var part = line.Split(' ');
+            Color32 c = new Color32(byte.Parse(part[1]), byte.Parse(part[2]), byte.Parse(part[3]), 255);
+            typeColor.Add(part[0], c);
+        }
+        foreach (var country in map.World.CountriesByTag.Values)
         {
             typeColor.Add(country.Tag, country.CultureColor);
             //Debug.Log(country.Tag + " " + country.CultureColor);
         }
-	}
+        var pathToOverlay = MapLoader.ChosenProjectDir + "/map/OVERLAY.png";
+        if (File.Exists(pathToOverlay))
+        {
+            var bytes = File.ReadAllBytes(pathToOverlay);
+            Overlay = new Texture2D(2, 2);
+            Overlay.LoadImage(bytes);
+            TargetOverlayImage.sprite = Sprite.Create(Overlay, Rect.MinMaxRect(0, 0, Overlay.width, Overlay.height), Vector2.one / 2);
+            var rectTransform = TargetOverlayImage.GetComponent<RectTransform>();
+            rectTransform.sizeDelta = new Vector2(Overlay.width, Overlay.height);
+            rectTransform.position = rectTransform.sizeDelta / 2 - new Vector2(chunkSize / 2, chunkSize / 2);
+            TargetOverlayImage.color = new Color(1, 1, 1, alpha);
+        }
+    }
     Vector2 scrollPos = Vector2.zero;
     bool showKeyBindings = true;
+    bool showOverlay = true;
     private void OnGUI()
     {
         if (showHelp == false)
@@ -89,7 +106,10 @@ public class MapRenderer : MonoBehaviour
             index++;
             GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + K => hide key bindings");
             index++;
-            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + R => change border mode to " + (borderShowType == BorderShowType.All?"Only Strategic Regions" : borderShowType == BorderShowType.OnlyRegions? "Only Supply Areas" : "Both regions and areas"));
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + R => change border mode to " + (borderShowType == BorderShowType.All ? "Only Strategic Regions" : borderShowType == BorderShowType.OnlyRegions ? "Only Supply Areas" : "Both regions and areas"));
+            index++;
+            GUI.Label(Rect.MinMaxRect(200, index * 30, 500, index * 30 + 30), "Shift + O => " + (showOverlay ? "Hide overlay" : "Show overlay"));
+
         }
         else
         {
@@ -99,20 +119,33 @@ public class MapRenderer : MonoBehaviour
 
     }
     public RenderMode mode = RenderMode.Normal;
-	public void ChangeMode(RenderMode mode)
-	{
+    public void ChangeMode(RenderMode mode)
+    {
         Debug.Log("Changing mode to " + mode);
-		this.mode = mode;
-		if (mode != RenderMode.Normal)
-			LitUpProvince (null);
-		FullRedraw ();
-	}
+        this.mode = mode;
+        if (mode != RenderMode.Normal)
+            LitUpProvince(null);
+        FullRedraw();
+    }
     bool showHelp = false;
-    enum BorderShowType {  All, OnlySupply, OnlyRegions }
+    enum BorderShowType { All, OnlySupply, OnlyRegions }
     BorderShowType borderShowType = BorderShowType.All;
+    float alpha = 0.25f;
     void Update()
     {
-        if(Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            alpha = Mathf.Clamp01(alpha + 0.1f);
+            if (showOverlay)
+                TargetOverlayImage.color = new Color(1, 1, 1, alpha);
+        }
+        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyUp(KeyCode.DownArrow))
+        {
+            alpha = Mathf.Clamp01(alpha - 0.1f);
+            if (showOverlay)
+                TargetOverlayImage.color = new Color(1, 1, 1, alpha);
+        }
+        if (Input.GetKey(KeyCode.LeftShift))
         {
 
             if (Input.GetKeyUp(KeyCode.H))
@@ -133,16 +166,24 @@ public class MapRenderer : MonoBehaviour
                 ChangeMode(RenderMode.Chunks);
             if (Input.GetKeyUp(KeyCode.Alpha3))
                 ChangeMode(RenderMode.IllegalCrossings);
+            if (Input.GetKeyUp(KeyCode.O))
+            {
+                showOverlay = !showOverlay;
+                if (showOverlay)
+                    TargetOverlayImage.color = new Color(1, 1, 1, alpha);
+                else
+                    TargetOverlayImage.color = Color.clear;
+            }
             if (Input.GetKeyUp(KeyCode.B))
             {
                 showBorders = !showBorders;
                 ChangeMode(mode);
             }
-            if(Input.GetKeyUp(KeyCode.K))
+            if (Input.GetKeyUp(KeyCode.K))
             {
                 showKeyBindings = !showKeyBindings;
             }
-            if(Input.GetKeyUp(KeyCode.R))
+            if (Input.GetKeyUp(KeyCode.R))
             {
                 if (borderShowType == BorderShowType.All)
                     borderShowType = BorderShowType.OnlyRegions;
@@ -166,7 +207,7 @@ public class MapRenderer : MonoBehaviour
                         mapMaterial.SetFloat("_ShowOnlyRegions", 0f);
                         break;
                 }
-                
+
             }
         }
         if (map == null)
@@ -225,18 +266,18 @@ public class MapRenderer : MonoBehaviour
                 image.sprite = Sprite.Create(chunkTex, Rect.MinMaxRect(0, 0, chunkSize, chunkSize), Vector2.zero);
                 chunkGo.transform.SetParent(transform, false);
                 chunkGOs.Add(chunkGo);
-                if(Time.realtimeSinceStartup - time > 12f)
+                if (Time.realtimeSinceStartup - time > 12f)
                     yield return null;
             }
         chunksReady = true;
-        Camera.main.transform.position = new Vector3(map.Width/2, map.Height/2, -10);
+        Camera.main.transform.position = new Vector3(map.Width / 2, map.Height / 2, -10);
     }
 
     IEnumerator RedrawCoroutine()
     {
 
         ProgressBar.Text = "Creating chunks. Please wait...";
-        ProgressBar.MaxProgress = chunks.GetLength(0)*chunks.GetLength(1);
+        ProgressBar.MaxProgress = chunks.GetLength(0) * chunks.GetLength(1);
         ProgressBar.Progress = 0;
         while (!chunksReady)
         {
@@ -281,29 +322,29 @@ public class MapRenderer : MonoBehaviour
         Update(tile.X, tile.Y);
     }
 
-	public void Update(State state)
-	{
-		for (int i = 0; i < state.Provinces.Count; i++)
-			Update (state.Provinces [i]);
-	}
-	public void Update(Province province)
-	{
-		foreach(var tile in province.Tiles)
-		{
-			Update (tile);
-			if(tile.BorderCount > 0)
-			{
-				if (tile.X > 0)
-					Update(tile.X - 1, tile.Y);
-				if (tile.X < map.Width - 1)
-					Update(tile.X + 1, tile.Y);
-				if (tile.Y > 0)
-					Update(tile.X, tile.Y - 1);
-				if (tile.Y < map.Height - 1)
-					Update(tile.X, tile.Y + 1);
-			}
-		}
-	}
+    public void Update(State state)
+    {
+        for (int i = 0; i < state.Provinces.Count; i++)
+            Update(state.Provinces[i]);
+    }
+    public void Update(Province province)
+    {
+        foreach (var tile in province.Tiles)
+        {
+            Update(tile);
+            if (tile.BorderCount > 0)
+            {
+                if (tile.X > 0)
+                    Update(tile.X - 1, tile.Y);
+                if (tile.X < map.Width - 1)
+                    Update(tile.X + 1, tile.Y);
+                if (tile.Y > 0)
+                    Update(tile.X, tile.Y - 1);
+                if (tile.Y < map.Height - 1)
+                    Update(tile.X, tile.Y + 1);
+            }
+        }
+    }
     public void Update(int x, int y)
     {
         if (y < 0 && y >= map.Height)
@@ -314,10 +355,10 @@ public class MapRenderer : MonoBehaviour
         int chunkOffsetY;
         var chunkTex = GetChunk(x, y, out chunkOffsetX, out chunkOffsetY);
 
-        Color color = GetColorForTile(map.Tiles[x,y]);
+        Color color = GetColorForTile(map.Tiles[x, y]);
 
         chunkTex.SetPixel(chunkOffsetX, chunkOffsetY, color);
-        
+
         forUpdate.Add(chunkTex);
 
     }
@@ -338,10 +379,12 @@ public class MapRenderer : MonoBehaviour
                 else if (tile.Province.State != null && tile.Province.State.Supply == null)
                 {
                     color = Color.yellow;
-                } else if (tile.Province.StrategicRegion == null)
+                }
+                else if (tile.Province.StrategicRegion == null)
                 {
                     color = Color.gray;
-                } else if(tile.Province.StrategicRegion != null && tile.Province.State == null)
+                }
+                else if (tile.Province.StrategicRegion != null && tile.Province.State == null)
                 {
                     tile.Province.StrategicRegion.TextureColor(ref color);
                 }
@@ -359,12 +402,12 @@ public class MapRenderer : MonoBehaviour
         {
             if (tile.BorderCount > 0)
             {
-                if(tile.X > 0 && tile.Y > 0)
+                if (tile.X > 0 && tile.Y > 0)
                 {
                     var leftTile = map.Tiles[tile.X - 1, tile.Y];
                     var topTile = map.Tiles[tile.X, tile.Y - 1];
                     var topLeftTile = map.Tiles[tile.X - 1, tile.Y - 1];
-                    if(tile.Province != leftTile.Province && tile.Province != topTile.Province && tile.Province != topLeftTile.Province &&
+                    if (tile.Province != leftTile.Province && tile.Province != topTile.Province && tile.Province != topLeftTile.Province &&
                        leftTile.Province != topLeftTile.Province && topTile.Province != topLeftTile.Province && leftTile.Province != topTile.Province)
                     {
                         color = Color.red;
@@ -373,7 +416,7 @@ public class MapRenderer : MonoBehaviour
                 }
             }
             byte value = (byte)(tile.Province.ID % 255 / 2);
-            color = new Color32(value, value, value,255);
+            color = new Color32(value, value, value, 255);
         }
         else if (mode == RenderMode.Chunks)
         {
@@ -443,7 +486,7 @@ public class MapRenderer : MonoBehaviour
             Color32 color = Color.clear;
             province.TextureColor(ref color);
             mapMaterial.SetColor(materialProvinceProp, color);
-            if(province.State != null)
+            if (province.State != null)
             {
 
                 builder.Append("State = ").Append(province.State.ID).Append(" ");
@@ -486,8 +529,8 @@ public class MapRenderer : MonoBehaviour
                     mapMaterial.SetFloat(stateOverlayProp, 0f);
                 }
             }
-            
-            
+
+
 
         }
         else

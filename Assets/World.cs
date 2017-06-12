@@ -74,7 +74,7 @@ public class World : ScriptableObject
             //Debug.Log(gfxPath);
             country.Load(this, histFile, gfxPath, null);
         }
-        Year = int.Parse(File.ReadAllText(dir + "/map/year.txt"));
+        Year = int.Parse(File.ReadAllText(dir + "/map/YEAR.txt"));
 	}
 	string dir;
 	public void SaveTo(string directory)
